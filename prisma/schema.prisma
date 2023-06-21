@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Account {
-  id                String  @id @default(cuid())
+  id                String   @id @default(cuid())
   userId            String
   type              String
   provider          String
@@ -19,6 +19,8 @@ model Account {
   refresh_token     String?
   access_token      String?
   expires_at        Int?
+  expires_in        Int? // Given  by spotify
+  token_at          DateTime @default(now())
   token_type        String?
   scope             String?
   id_token          String?
@@ -45,6 +47,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  themes        Theme[]
 }
 
 model VerificationToken {
@@ -53,4 +56,14 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Theme {
+  id    String @id @default(cuid())
+  users User[]
+
+  light        String?
+  dark         String?
+  corners_path String?
+  corners_fill String?
 }
