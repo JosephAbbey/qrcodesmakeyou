@@ -3,6 +3,8 @@
   import type { PageData } from './$types';
   import QrCode from '$lib/QRCode.svelte';
   import { Button, Code, Space } from '@svelteuidev/core';
+  import { Check } from 'svelte-radix';
+  import { notify } from '../../../stores/notifications';
   export let data: PageData;
 
   let saved = data.saved;
@@ -34,7 +36,16 @@
   {/if}
   <Space h="sm" />
   <Code
-    on:click={() => (navigator.clipboard.writeText($page.url.href), alert('copied'))}
+    on:click={() => (
+      navigator.clipboard.writeText($page.url.href),
+      notify({
+        title: 'Copied',
+        icon: Check,
+        color: 'green',
+        body: 'Link copied to clipboard.'
+      })
+    )}
+    override={{ userSelect: 'none' }}
     color="teal"
   >
     {$page.url.href}

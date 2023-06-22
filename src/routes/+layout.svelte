@@ -2,22 +2,19 @@
   import { goto } from '$app/navigation';
   import {
     SvelteUIProvider,
-    fns,
     AppShell,
-    Navbar,
     Header,
-    Title,
-    Divider,
     ShellSection,
-    Footer,
-    Button,
     Group,
-    Space,
     Seo,
-    ActionIcon
+    ActionIcon,
+    Center,
+    Stack,
+    Notification,
+    Space
   } from '@svelteuidev/core';
   import { onMount } from 'svelte';
-  import { GithubLogo, Moon, Sun, Gear, Home, ColorWheel } from 'svelte-radix';
+  import { GithubLogo, Moon, Sun, Gear, Home, ColorWheel, MagicWand, Check } from 'svelte-radix';
 
   let theme: 'dark' | 'light' = 'dark';
 
@@ -41,6 +38,11 @@
     theme = theme == 'dark' ? 'light' : 'dark';
     localStorage.setItem('theme', theme);
   }
+
+  import type { LayoutData } from './$types';
+  import { notifications, clear } from '../stores/notifications';
+
+  export let data: LayoutData;
 </script>
 
 <Seo title="qrcodesmakeyou" titleTemplate="%t% | qrcodesmakeyou" nofollow={true} noindex={true} />
@@ -55,7 +57,11 @@
         <ActionIcon color="teal" variant="filled" on:click={() => goto('/themes')}>
           <ColorWheel />
         </ActionIcon>
-        <ActionIcon color="teal" variant="filled">
+        <ActionIcon
+          color="teal"
+          variant="filled"
+          on:click={() => goto('https://github.com/JosephAbbey/qrcodesmakeyou')}
+        >
           <GithubLogo />
         </ActionIcon>
         <ActionIcon color="teal" variant="filled" on:click={toggleTheme}>
@@ -66,10 +72,31 @@
           {/if}
         </ActionIcon>
         <ActionIcon color="teal" variant="filled" on:click={() => goto('/settings')}>
-          <Gear />
+          {#if data.session?.user}
+            <Gear />
+          {:else}
+            <MagicWand />
+          {/if}
         </ActionIcon>
       </Group>
     </Header>
+
+    <Center>
+      <Stack>
+        {#each $notifications.slice(-5) as notification, i}
+          <Notification
+            title={notification.title}
+            icon={notification.icon}
+            color={notification.color}
+            on:close={() => clear(i)}
+          >
+            {notification.body}
+          </Notification>
+        {/each}
+      </Stack>
+    </Center>
+
+    <Space h="md" />
 
     <ShellSection grow>
       <slot />

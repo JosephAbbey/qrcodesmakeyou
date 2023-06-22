@@ -2,19 +2,21 @@ import type { PageServerLoad } from './$types';
 import { GOOGLE_KEY } from '$env/static/private';
 import prisma from '$lib/prisma';
 
+interface QuickGen {
+  url: string;
+  img?: string | undefined;
+  title: string;
+  provider: 'yt' | 'yt mu' | 'gh' | 'sp';
+  updated_at: number;
+}
+
 export const load: PageServerLoad = async (event) => {
   const session = await event.locals.getSession();
-  const accounts = await prisma.account.findMany({
-    where: { userId: session?.user?.id ?? '' }
-  });
-
-  interface QuickGen {
-    url: string;
-    img?: string | undefined;
-    title: string;
-    provider: 'yt' | 'yt mu' | 'gh' | 'sp';
-    updated_at: number;
-  }
+  const accounts = session?.user
+    ? await prisma.account.findMany({
+        where: { userId: session.user.id ?? '' }
+      })
+    : [];
 
   const promises: Promise<QuickGen[]>[] = [];
   for (const account of accounts) {
@@ -120,15 +122,16 @@ export const load: PageServerLoad = async (event) => {
     }
   }
 
-  const themes =
-    (
-      await prisma.user.findUnique({
-        where: { id: session?.user?.id ?? '' },
-        include: {
-          themes: true
-        }
-      })
-    )?.themes ?? [];
+  const themes = session?.user
+    ? (
+        await prisma.user.findUnique({
+          where: { id: session.user.id ?? '' },
+          include: {
+            themes: true
+          }
+        })
+      )?.themes ?? []
+    : [];
 
   return {
     quick_gens: Promise.all(promises).then((d) =>

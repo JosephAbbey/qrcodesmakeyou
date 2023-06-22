@@ -12,9 +12,10 @@
     Container,
     Center,
     MediaQuery,
-    Tabs
+    Tabs,
+    Box
   } from '@svelteuidev/core';
-  import { Download, Share1, Video, GithubLogo, Play, Copy } from 'svelte-radix';
+  import { Download, Share1, Video, GithubLogo, Play, Copy, Check } from 'svelte-radix';
 
   import { page } from '$app/stores';
   import type { PageData } from './$types';
@@ -23,6 +24,7 @@
   import type { Theme } from '@prisma/client';
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
+  import { notify } from '../stores/notifications';
   export let data: PageData;
 
   let url = $page.url.searchParams.get('shared_url') ?? 'https://josephabbey.dev/';
@@ -47,7 +49,7 @@
 
   <Space h="md" />
 
-  <Group noWrap>
+  <Group override={{ justifyContent: 'center' }}>
     <Button type="button" on:click={() => code.download('image/svg+xml')}>
       <Download /><Space w="sm" /> Save (.svg)
     </Button>
@@ -57,247 +59,294 @@
     <Button type="button" on:click={() => code.share('image/png')}>
       <Share1 /><Space w="sm" /> Share (.png)
     </Button>
-    <Button type="button" on:click={() => code.copy('image/png')}>
+    <Button
+      type="button"
+      on:click={() => (
+        code.copy('image/png'),
+        notify({
+          title: 'Copied',
+          icon: Check,
+          color: 'green',
+          body: 'Code copied to clipboard.'
+        })
+      )}
+    >
       <Copy /><Space w="sm" /> Copy (.png)
     </Button>
   </Group>
 
-  <Space h="md" />
+  {#if data.themes.length > 0 && data.quick_gens.length > 0}
+    <Space h="md" />
 
-  <Center override={{ 'align-items': 'unset' }}>
-    {#if width > 800}
-      <Grid mx={300}>
-        <Grid.Col span={6}>
-          <Grid>
-            <Grid.Col span={12}><Center><Text>Quick Gens</Text></Center></Grid.Col>
-            {#each data.quick_gens as item}
-              <Grid.Col span={6}>
-                <Card shadow="md">
-                  <!-- {#if item.img} -->
-                  <Card.Section padding="lg">
-                    <Image
-                      fit="cover"
-                      usePlaceholder
-                      src={item.img}
-                      height={100}
-                      alt={item.title}
-                    />
-                  </Card.Section>
-                  <!-- {/if} -->
+    <Center override={{ 'align-items': 'unset' }}>
+      {#if width > 800}
+        <Grid mx={300}>
+          <Grid.Col span={6}>
+            <Grid>
+              <Grid.Col span={12}><Center><Text>Quick Gens</Text></Center></Grid.Col>
+              {#each data.quick_gens as item}
+                <Grid.Col span={6}>
+                  <Card shadow="md">
+                    <!-- {#if item.img} -->
+                    <Card.Section padding="lg">
+                      <Image
+                        fit="cover"
+                        usePlaceholder
+                        src={item.img}
+                        height={100}
+                        alt={item.title}
+                      />
+                    </Card.Section>
+                    <!-- {/if} -->
 
-                  <Center>
-                    <Text align="center" my="sm">{item.title}</Text>
-                  </Center>
+                    <Center>
+                      <Text align="center" my="sm">{item.title}</Text>
+                    </Center>
 
-                  <Group noWrap>
-                    {#if item.provider == 'yt'}
-                      <Button
-                        fullSize
-                        variant="light"
-                        color="red"
-                        on:click={() => (url = item.url)}
-                      >
-                        Generate
-                      </Button>
-                      <Button fullSize variant="light" color="red" on:click={() => goto(item.url)}>
-                        <Video />
-                      </Button>
-                    {:else if item.provider == 'yt mu'}
-                      <Button
-                        fullSize
-                        variant="light"
-                        color="red"
-                        on:click={() => (url = item.url)}
-                      >
-                        Generate
-                      </Button>
-                      <Button fullSize variant="light" color="red" on:click={() => goto(item.url)}>
-                        <Play />
-                      </Button>
-                    {:else if item.provider == 'gh'}
-                      <Button
-                        fullSize
-                        variant="light"
-                        color="dark"
-                        on:click={() => (url = item.url)}
-                      >
-                        Generate
-                      </Button>
-                      <Button fullSize variant="light" color="dark" on:click={() => goto(item.url)}>
-                        <GithubLogo />
-                      </Button>
-                    {:else if item.provider == 'sp'}
-                      <Button
-                        fullSize
-                        variant="light"
-                        color="green"
-                        on:click={() => (url = item.url)}
-                      >
-                        Generate
-                      </Button>
-                      <Button
-                        fullSize
-                        variant="light"
-                        color="green"
-                        on:click={() => goto(item.url)}
-                      >
-                        <Play />
-                      </Button>
-                    {:else}
-                      <Button fullSize variant="light" on:click={() => (url = item.url)}>
-                        Generate
-                      </Button>
-                      <Button fullSize variant="light" on:click={() => goto(item.url)}>Go</Button>
-                    {/if}
-                  </Group>
-                </Card>
-              </Grid.Col>
-            {/each}
-          </Grid>
-        </Grid.Col>
-        <Grid.Col span={6}>
-          <Grid>
-            <Grid.Col span={12}><Center><Text>Themes</Text></Center></Grid.Col>
-            <Grid.Col span={6}>
-              <Card shadow="md">
-                <Container m="sm">
-                  <QrCode {url} margin={1} />
-                </Container>
-                <Button fullSize variant="light" on:click={() => (theme = undefined)}>Apply</Button>
-              </Card>
-            </Grid.Col>
-            {#each data.themes as i_theme}
-              <Grid.Col span={6}>
-                <Card shadow="md">
-                  <Container m="sm">
-                    <QrCode {url} theme={i_theme} margin={1} />
-                  </Container>
-                  <Button fullSize variant="light" on:click={() => (theme = i_theme)}>Apply</Button>
-                </Card>
-              </Grid.Col>
-            {/each}
-          </Grid>
-        </Grid.Col>
-      </Grid>
-    {:else}
-      <Tabs grow>
-        <Tabs.Tab label="Quick Gens">
-          <Grid>
-            {#each data.quick_gens as item}
-              <Grid.Col span={6}>
-                <Card shadow="md">
-                  <!-- {#if item.img} -->
-                  <Card.Section padding="lg">
-                    <Image
-                      fit="cover"
-                      usePlaceholder
-                      src={item.img}
-                      height={100}
-                      alt={item.title}
-                    />
-                  </Card.Section>
-                  <!-- {/if} -->
-
-                  <Center>
-                    <Text align="center" my="sm">{item.title}</Text>
-                  </Center>
-
-                  <Group noWrap>
-                    {#if item.provider == 'yt'}
-                      <Button
-                        fullSize
-                        variant="light"
-                        color="red"
-                        on:click={() => (url = item.url)}
-                      >
-                        Generate
-                      </Button>
-                      <Button fullSize variant="light" color="red" on:click={() => goto(item.url)}>
-                        <Video />
-                      </Button>
-                    {:else if item.provider == 'yt mu'}
-                      <Button
-                        fullSize
-                        variant="light"
-                        color="red"
-                        on:click={() => (url = item.url)}
-                      >
-                        Generate
-                      </Button>
-                      <Button fullSize variant="light" color="red" on:click={() => goto(item.url)}>
-                        Go
-                      </Button>
-                    {:else if item.provider == 'gh'}
-                      <Button
-                        fullSize
-                        variant="light"
-                        color="dark"
-                        on:click={() => (url = item.url)}
-                      >
-                        Generate
-                      </Button>
-                      <Button fullSize variant="light" color="dark" on:click={() => goto(item.url)}>
-                        <GithubLogo />
-                      </Button>
-                    {:else if item.provider == 'sp'}
-                      <Button
-                        fullSize
-                        variant="light"
-                        color="green"
-                        on:click={() => (url = item.url)}
-                      >
-                        Generate
-                      </Button>
-                      <Button
-                        fullSize
-                        variant="light"
-                        color="green"
-                        on:click={() => goto(item.url)}
-                      >
-                        Go
-                      </Button>
-                    {:else}
-                      <Button fullSize variant="light" on:click={() => (url = item.url)}>
-                        Generate
-                      </Button>
-                      <Button
-                        fullSize
-                        variant="light"
-                        href={item.url}
-                        on:click={() => goto(item.url)}>Go</Button
-                      >
-                    {/if}
-                  </Group>
-                </Card>
-              </Grid.Col>
-            {/each}
-          </Grid>
-        </Tabs.Tab>
-        <Tabs.Tab label="Themes">
-          <Grid>
-            <Grid.Col span={6}>
-              <Card shadow="md">
-                <Container m="sm">
-                  <QrCode {url} margin={1} />
-                </Container>
-                <Button fullSize variant="light" on:click={() => (theme = undefined)}>Apply</Button>
-              </Card>
-            </Grid.Col>
-            {#each data.themes as i_theme}
+                    <Group noWrap>
+                      {#if item.provider == 'yt'}
+                        <Button
+                          fullSize
+                          variant="light"
+                          color="red"
+                          on:click={() => (url = item.url)}
+                        >
+                          Generate
+                        </Button>
+                        <Button
+                          fullSize
+                          variant="light"
+                          color="red"
+                          on:click={() => goto(item.url)}
+                        >
+                          <Video />
+                        </Button>
+                      {:else if item.provider == 'yt mu'}
+                        <Button
+                          fullSize
+                          variant="light"
+                          color="red"
+                          on:click={() => (url = item.url)}
+                        >
+                          Generate
+                        </Button>
+                        <Button
+                          fullSize
+                          variant="light"
+                          color="red"
+                          on:click={() => goto(item.url)}
+                        >
+                          <Play />
+                        </Button>
+                      {:else if item.provider == 'gh'}
+                        <Button
+                          fullSize
+                          variant="light"
+                          color="dark"
+                          on:click={() => (url = item.url)}
+                        >
+                          Generate
+                        </Button>
+                        <Button
+                          fullSize
+                          variant="light"
+                          color="dark"
+                          on:click={() => goto(item.url)}
+                        >
+                          <GithubLogo />
+                        </Button>
+                      {:else if item.provider == 'sp'}
+                        <Button
+                          fullSize
+                          variant="light"
+                          color="green"
+                          on:click={() => (url = item.url)}
+                        >
+                          Generate
+                        </Button>
+                        <Button
+                          fullSize
+                          variant="light"
+                          color="green"
+                          on:click={() => goto(item.url)}
+                        >
+                          <Play />
+                        </Button>
+                      {:else}
+                        <Button fullSize variant="light" on:click={() => (url = item.url)}>
+                          Generate
+                        </Button>
+                        <Button fullSize variant="light" on:click={() => goto(item.url)}>Go</Button>
+                      {/if}
+                    </Group>
+                  </Card>
+                </Grid.Col>
+              {/each}
+            </Grid>
+          </Grid.Col>
+          <Grid.Col span={6}>
+            <Grid>
+              <Grid.Col span={12}><Center><Text>Themes</Text></Center></Grid.Col>
               <Grid.Col span={6}>
                 <Card shadow="md">
                   <Container m="sm">
-                    <QrCode {url} theme={i_theme} margin={1} />
+                    <QrCode {url} margin={1} />
                   </Container>
-                  <Button fullSize variant="light" on:click={() => (theme = i_theme)}>Apply</Button>
+                  <Button fullSize variant="light" on:click={() => (theme = undefined)}>
+                    Apply
+                  </Button>
                 </Card>
               </Grid.Col>
-            {/each}
-          </Grid>
-        </Tabs.Tab>
-      </Tabs>
-    {/if}
-  </Center>
+              {#each data.themes as i_theme}
+                <Grid.Col span={6}>
+                  <Card shadow="md">
+                    <Container m="sm">
+                      <QrCode {url} theme={i_theme} margin={1} />
+                    </Container>
+                    <Button fullSize variant="light" on:click={() => (theme = i_theme)}>
+                      Apply
+                    </Button>
+                  </Card>
+                </Grid.Col>
+              {/each}
+            </Grid>
+          </Grid.Col>
+        </Grid>
+      {:else}
+        <Tabs grow>
+          <Tabs.Tab label="Quick Gens">
+            <Grid>
+              {#each data.quick_gens as item}
+                <Grid.Col span={6}>
+                  <Card shadow="md">
+                    <!-- {#if item.img} -->
+                    <Card.Section padding="lg">
+                      <Image
+                        fit="cover"
+                        usePlaceholder
+                        src={item.img}
+                        height={100}
+                        alt={item.title}
+                      />
+                    </Card.Section>
+                    <!-- {/if} -->
+
+                    <Center>
+                      <Text align="center" my="sm">{item.title}</Text>
+                    </Center>
+
+                    <Group noWrap>
+                      {#if item.provider == 'yt'}
+                        <Button
+                          fullSize
+                          variant="light"
+                          color="red"
+                          on:click={() => (url = item.url)}
+                        >
+                          Generate
+                        </Button>
+                        <Button
+                          fullSize
+                          variant="light"
+                          color="red"
+                          on:click={() => goto(item.url)}
+                        >
+                          <Video />
+                        </Button>
+                      {:else if item.provider == 'yt mu'}
+                        <Button
+                          fullSize
+                          variant="light"
+                          color="red"
+                          on:click={() => (url = item.url)}
+                        >
+                          Generate
+                        </Button>
+                        <Button
+                          fullSize
+                          variant="light"
+                          color="red"
+                          on:click={() => goto(item.url)}
+                        >
+                          Go
+                        </Button>
+                      {:else if item.provider == 'gh'}
+                        <Button
+                          fullSize
+                          variant="light"
+                          color="dark"
+                          on:click={() => (url = item.url)}
+                        >
+                          Generate
+                        </Button>
+                        <Button
+                          fullSize
+                          variant="light"
+                          color="dark"
+                          on:click={() => goto(item.url)}
+                        >
+                          <GithubLogo />
+                        </Button>
+                      {:else if item.provider == 'sp'}
+                        <Button
+                          fullSize
+                          variant="light"
+                          color="green"
+                          on:click={() => (url = item.url)}
+                        >
+                          Generate
+                        </Button>
+                        <Button
+                          fullSize
+                          variant="light"
+                          color="green"
+                          on:click={() => goto(item.url)}
+                        >
+                          Go
+                        </Button>
+                      {:else}
+                        <Button fullSize variant="light" on:click={() => (url = item.url)}>
+                          Generate
+                        </Button>
+                        <Button
+                          fullSize
+                          variant="light"
+                          href={item.url}
+                          on:click={() => goto(item.url)}>Go</Button
+                        >
+                      {/if}
+                    </Group>
+                  </Card>
+                </Grid.Col>
+              {/each}
+            </Grid>
+          </Tabs.Tab>
+          <Tabs.Tab label="Themes">
+            <Grid>
+              <Grid.Col span={6}>
+                <Card shadow="md">
+                  <QrCode {url} margin={1} />
+                  <Button fullSize variant="light" on:click={() => (theme = undefined)}>
+                    Apply
+                  </Button>
+                </Card>
+              </Grid.Col>
+              {#each data.themes as i_theme}
+                <Grid.Col span={6}>
+                  <Card shadow="md">
+                    <QrCode {url} theme={i_theme} margin={1} />
+                    <Button fullSize variant="light" on:click={() => (theme = i_theme)}>
+                      Apply
+                    </Button>
+                  </Card>
+                </Grid.Col>
+              {/each}
+            </Grid>
+          </Tabs.Tab>
+        </Tabs>
+      {/if}
+    </Center>
+  {/if}
 </div>
 
 <style>
