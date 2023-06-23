@@ -30,7 +30,7 @@
 
 <div class="container">
   <div class="code">
-    <QrCode url={$page.url.href} theme={{ corners_fill, corners_path, dark, light }} />
+    <QrCode url={$page.url.href.substring(0, -4)} theme={{ corners_fill, corners_path, dark, light }} />
   </div>
   <Space h="sm" />
   <Group>
