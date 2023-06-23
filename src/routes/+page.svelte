@@ -27,7 +27,7 @@
   import { notify } from '../stores/notifications';
   export let data: PageData;
 
-  let url = $page.url.searchParams.get('shared_url') ?? 'https://josephabbey.dev/';
+  let url = $page.url.searchParams.get('shared_url') ?? 'https://qr.josephabbey.dev/';
   let theme: Theme | undefined = undefined;
   let code: QRCode;
 
