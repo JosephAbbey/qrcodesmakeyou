@@ -42,6 +42,7 @@
     "@prisma/client": "^4.15.0",
     "@svelteuidev/composables": "^0.13.0",
     "@svelteuidev/core": "^0.13.0",
+    "@vercel/analytics": "^1.0.1",
     "qrcode": "^1.5.3",
     "svelte-radix": "^0.4.5"
   }
