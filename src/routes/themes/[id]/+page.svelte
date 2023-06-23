@@ -2,9 +2,10 @@
   import { page } from '$app/stores';
   import type { PageData } from './$types';
   import QrCode from '$lib/QRCode.svelte';
-  import { Button, Code, Space } from '@svelteuidev/core';
+  import { Button, Code, Group, Space } from '@svelteuidev/core';
   import { Check } from 'svelte-radix';
   import { notify } from '../../../stores/notifications';
+  import { goto } from '$app/navigation';
   export let data: PageData;
 
   let saved = data.saved;
@@ -30,7 +31,10 @@
   </div>
   <Space h="sm" />
   {#if saved}
-    <Button type="button" on:click={forget}>Forget</Button>
+    <Group>
+      <Button type="button" on:click={() => goto('./edit')}>Edit</Button>
+      <Button type="button" on:click={forget}>Forget</Button>
+    </Group>
   {:else}
     <Button type="button" on:click={save}>Save</Button>
   {/if}

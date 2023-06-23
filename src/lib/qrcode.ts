@@ -1,5 +1,6 @@
 import { toString } from 'qrcode';
 import type { Theme } from '@prisma/client';
+
 export default async function qrcode(
   url: string,
   theme?: Omit<Theme, 'id' | 'userId'>,

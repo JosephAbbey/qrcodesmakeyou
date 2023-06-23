@@ -41,7 +41,7 @@ export const load: PageServerLoad = async (event) => {
             .then((r) => r.json())
             .then(
               (d) =>
-                d.items?.flatMap((i: any) => [
+                d.items?.flatMap((i: unknown) => [
                   {
                     url: 'https://www.youtube.com/playlist?list=' + i.id,
                     img: i.snippet.thumbnails.default.url,
@@ -89,7 +89,7 @@ export const load: PageServerLoad = async (event) => {
                 .then((r) => r.json())
                 .then(
                   (d) =>
-                    d?.map((i: any) => ({
+                    d?.map((i: unknown) => ({
                       url: i.html_url,
                       title: i.name,
                       updated_at: i.updated_at,
@@ -109,7 +109,7 @@ export const load: PageServerLoad = async (event) => {
             .then((r) => r.json())
             .then(
               (d) =>
-                d?.items?.map((i: any) => ({
+                d?.items?.map((i: unknown) => ({
                   url: i.external_urls.spotify,
                   img: i.images[0]?.url,
                   title: i.name,
