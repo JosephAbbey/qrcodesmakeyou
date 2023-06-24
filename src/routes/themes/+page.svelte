@@ -21,15 +21,13 @@
           <Container m="sm">
             <QrCode url={$page.url.href + theme.id} {theme} margin={1} />
           </Container>
-          <Button
-            fullSize
-            variant="light"
-            href={$page.url + theme.id}
-            on:click={() => goto($page.url + theme.id)}>View</Button
-          >
+          <Button fullSize variant="light" on:click={() => goto('./' + theme.id)}>View</Button>
         </Card>
       </Grid.Col>
     {/each}
   </Grid>
+  <Center>
+    <Button on:click={() => goto('./new/edit')}>New</Button>
+  </Center>
 </MediaQuery>
 <!-- </Center> -->
