@@ -31,7 +31,7 @@
 <div class="container">
   <div class="code">
     <QrCode
-      url={$page.url.href.substring(0, -4)}
+      url={$page.url.href.substring(0, $page.url.href.length - 4)}
       theme={{ corners_fill, corners_path, dark, light }}
     />
   </div>
