@@ -47,9 +47,31 @@
   import { notifications, clear } from '../stores/notifications';
 
   export let data: LayoutData;
+
+  const title = 'qrcodesmakeyou';
+  const description = '';
+  const canonical = 'https://qrcodesmakeyou.josephabbey.dev';
 </script>
 
-<Seo title="qrcodesmakeyou" titleTemplate="%t% | qrcodesmakeyou" nofollow={true} noindex={true} />
+<Seo
+  {title}
+  titleTemplate="%t% | qrcodesmakeyou"
+  {description}
+  {canonical}
+  twitter={{
+    cardType: 'app',
+    description,
+    title,
+    handle: '@__JosephAbbey'
+  }}
+  openGraph={{
+    url: canonical,
+    description,
+    title,
+    type: 'website'
+  }}
+  robotsProps={{ nosnippet: true }}
+/>
 
 <SvelteUIProvider withGlobalStyles themeObserver={theme}>
   <AppShell>
