@@ -7,6 +7,24 @@
     <meta name="viewport" content="width=device-width" />
 
     %sveltekit.head%
+
+    <style>
+      html {
+        overflow-y: scroll;
+      }
+
+      *::-webkit-scrollbar {
+        width: 0.4em;
+      }
+
+      *::-webkit-scrollbar-thumb {
+        background-color: #aaaaaa55;
+      }
+
+      *::-webkit-scrollbar-track {
+        background: transparent;
+      }
+    </style>
   </head>
   <body data-sveltekit-preload-data="hover">
     <div style="display: contents">%sveltekit.body%</div>
