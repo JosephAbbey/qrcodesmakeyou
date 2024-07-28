@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@auth/core':
     specifier: ^0.8.2
@@ -14,11 +18,11 @@ dependencies:
     specifier: ^4.15.0
     version: 4.15.0(prisma@4.15.0)
   '@svelteuidev/composables':
-    specifier: ^0.13.0
-    version: 0.13.0(svelte@3.59.1)
+    specifier: ^0.15.0
+    version: 0.15.7(svelte@3.59.1)
   '@svelteuidev/core':
-    specifier: ^0.13.0
-    version: 0.13.0(@svelteuidev/composables@0.13.0)(svelte@3.59.1)
+    specifier: ^0.15.0
+    version: 0.15.7(@svelteuidev/composables@0.15.7)(svelte@3.59.1)
   '@vercel/analytics':
     specifier: ^1.0.1
     version: 1.0.1
@@ -556,23 +560,23 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /@svelteuidev/composables@0.13.0(svelte@3.59.1):
-    resolution: {integrity: sha512-vnDcmSMwav11Xp4f9PUJW5wlHbj1rQTIU9v62C0eOjfq4r/CLyj8FTRslKX5nrBUQxxlYlamsdM5rqCUm4aEbw==}
+  /@svelteuidev/composables@0.15.7(svelte@3.59.1):
+    resolution: {integrity: sha512-tVA+0bNtsYsJqlpNx9ZArzHFBJYfoKM+nspkv+wzOx40HsCg33MutqNexOvrMYSj5/tSxxBefLQKdwNumErF6Q==}
     peerDependencies:
       svelte: '>=3.55.0'
     dependencies:
       svelte: 3.59.1
     dev: false
 
-  /@svelteuidev/core@0.13.0(@svelteuidev/composables@0.13.0)(svelte@3.59.1):
-    resolution: {integrity: sha512-Jtl8J8leUkEHTpLQsJ5Rgeb0CqTAcn4ol656bqLjy/ZMLCpaRP867E5W31htLn7BxOVLpUe9QKpiuoTz7nHLcQ==}
+  /@svelteuidev/core@0.15.7(@svelteuidev/composables@0.15.7)(svelte@3.59.1):
+    resolution: {integrity: sha512-lTUjQdGhiNK5as3mBZgsixNsgH/RcwhGdSQpc7wNEASkgJSyPsv2hiak/m4a78pDJ3owrRAWbURu17hE9eF/tw==}
     peerDependencies:
-      '@svelteuidev/composables': 0.13.0
+      '@svelteuidev/composables': 0.15.7
       svelte: '>=3.55.0'
     dependencies:
       '@floating-ui/dom': 1.2.8
       '@stitches/core': 1.2.8
-      '@svelteuidev/composables': 0.13.0(svelte@3.59.1)
+      '@svelteuidev/composables': 0.15.7(svelte@3.59.1)
       svelte: 3.59.1
     dev: false
 

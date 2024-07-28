@@ -13,9 +13,23 @@
     Center,
     MediaQuery,
     Tabs,
-    Box
+    Box,
+    Collapse,
+    Title,
+    Checkbox,
+    NativeSelect
   } from '@svelteuidev/core';
-  import { Download, Share1, Video, GithubLogo, Play, Copy, Check } from 'svelte-radix';
+  import {
+    Download,
+    Share1,
+    Video,
+    GithubLogo,
+    Play,
+    Copy,
+    Check,
+    MagicWand,
+    DropdownMenu
+  } from 'svelte-radix';
 
   import { page } from '$app/stores';
   import type { PageData } from './$types';
@@ -40,10 +54,54 @@
   onMount(() => {
     width = window.innerWidth;
   });
+
+  let wifi = false;
+
+  let ssid = '';
+  let password = '';
+  let security = 'WPA';
+  let hidden = false;
 </script>
 
 <div class="container">
-  <TextInput type="text" name="code" id="code" bind:value={url} />
+  <Group>
+    <TextInput type="text" name="code" id="code" bind:value={url} />
+    <Button type="button" on:click={() => (wifi = !wifi)}><MagicWand /></Button>
+  </Group>
+
+  <Collapse open={wifi}>
+    <!-- WIFI:S:<SSID>;T:<WEP|WPA|nopass>;P:<PASSWORD>;H:<true|false|blank>;; -->
+    <Space h="md" />
+    <Title order={3}>WiFi Network:</Title>
+    <Space h="md" />
+    <TextInput type="text" name="ssid" id="ssid" placeholder="SSID" bind:value={ssid} />
+    <Space h="md" />
+    {#if security != 'nopass'}
+      <TextInput
+        type="text"
+        name="password"
+        id="password"
+        placeholder="Password"
+        bind:value={password}
+      />
+      <Space h="md" />
+    {/if}
+    <NativeSelect
+      name="security"
+      id="security"
+      data={['WEP', 'WPA', { value: 'nopass', label: 'No Password' }]}
+      bind:value={security}
+    />
+    <Space h="md" />
+    <Checkbox name="hidden" id="hidden" label="Hidden Network" bind:checked={hidden} />
+    <Space h="md" />
+    <Button
+      type="button"
+      on:click={() => {
+        url = `WIFI:S:${ssid};T:${security};P:${password};H:${hidden ? 'true' : 'false'};;`;
+      }}>Generate</Button
+    >
+  </Collapse>
 
   <Space h="md" />
 
@@ -84,7 +142,7 @@
 
     <Center override={{ 'align-items': 'unset' }}>
       {#if width > 800}
-        <Grid mx={300}>
+        <Grid mx={200}>
           <Grid.Col span={6}>
             <Grid>
               <Grid.Col span={12}><Center><Text>Quick Gens</Text></Center></Grid.Col>
