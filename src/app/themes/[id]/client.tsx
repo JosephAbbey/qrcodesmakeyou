@@ -4,9 +4,16 @@ import { ThemeType } from '../themes'
 import { forget, add } from './actions'
 import { QRCode } from '@/components/qrcode'
 import { Button } from '@/components/ui/button'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import qrcode from '@/lib/qrcode'
-import { Edit, PlusCircle, Share2, Trash2 } from 'lucide-react'
+import {
+  DivideSquareIcon,
+  Edit,
+  PlusCircle,
+  Share2,
+  Trash2,
+} from 'lucide-react'
 import Link from 'next/link'
 import { useState, useOptimistic, Suspense } from 'react'
 import { toast } from 'sonner'
@@ -86,15 +93,18 @@ export function ThemeInnerClient({
           </Button>
         }
       </div>
-      <div
-        className='cursor-pointer select-none rounded-md bg-secondary p-2'
+      <ScrollArea
         onClick={async () => {
           await navigator.clipboard.writeText(
             `https://qr.josephabbey.dev/themes/${theme.id}`,
           )
           toast('Copied to clipboard')
         }}
-      >{`https://qr.josephabbey.dev/themes/${theme.id}`}</div>
+        className='w-full max-w-2xl cursor-pointer select-none rounded-md bg-secondary p-2 font-mono'
+      >
+        {`https://qr.josephabbey.dev/themes/${theme.id}`}
+        <ScrollBar orientation='horizontal' />
+      </ScrollArea>
     </>
   )
 }
