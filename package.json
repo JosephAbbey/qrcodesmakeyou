@@ -23,6 +23,7 @@
     "@radix-ui/react-tabs": "^1.1.0",
     "@serwist/next": "^9.0.5",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@vercel/speed-insights": "^1.0.12",
     "arktype": "^2.0.0-beta.2",
     "babel-plugin-react-compiler": "^0.0.0-experimental-334f00b-20240725",
     "class-variance-authority": "^0.7.0",
