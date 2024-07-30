@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description: 'A simple QR code generator',
   creator: 'Joseph Abbey',
   manifest: '/manifest.json',
-  icons: '/qr-code.svg',
+  icons: '/favicon.ico',
   applicationName: 'QRCodes',
   appleWebApp: {
     capable: true,
