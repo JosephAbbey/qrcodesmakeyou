@@ -122,14 +122,22 @@ export default function QRCodeSection({
                 </div>
               </div>
               <DrawerFooter>
-                <DrawerClose asChild>
-                  <Button type='submit'>Submit</Button>
-                </DrawerClose>
-                <DrawerClose asChild>
-                  <Button type='button' variant='destructive'>
-                    Cancel
-                  </Button>
-                </DrawerClose>
+                <div className='flex w-full gap-2'>
+                  <DrawerClose asChild>
+                    <Button type='submit' className='flex-grow'>
+                      Submit
+                    </Button>
+                  </DrawerClose>
+                  <DrawerClose asChild>
+                    <Button
+                      type='button'
+                      variant='destructive'
+                      className='flex-grow'
+                    >
+                      Cancel
+                    </Button>
+                  </DrawerClose>
+                </div>
               </DrawerFooter>
             </form>
           </DrawerContent>
