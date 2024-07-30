@@ -35,6 +35,7 @@ import {
   type ReactNode,
   useEffect,
   Suspense,
+  useTransition,
 } from 'react'
 import { toast } from 'sonner'
 
@@ -56,6 +57,8 @@ export default function QRCodeSection({
   themes: ReactNode
   defaultUrl?: string | undefined
 }) {
+  const [_, startTransition] = useTransition()
+
   const [url, setUrl] = useState(defaultUrl ?? 'https://qr.josephabbey.dev')
 
   const [theme, setTheme] = useState<ThemeType | null>(null)
@@ -63,7 +66,7 @@ export default function QRCodeSection({
   const [svg, setSvg] = useState<Promise<string> | null>(null)
   useEffect(() => {
     if (!url) return
-    setSvg(qrcode(url, theme))
+    startTransition(() => setSvg(qrcode(url, theme)))
   }, [url, theme])
 
   return (
