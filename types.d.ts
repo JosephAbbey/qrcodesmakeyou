@@ -1,10 +1,13 @@
-declare module '@auth/core' {
+export * from '@auth/core/types'
+
+declare module '@auth/core/types' {
   /**
    * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
    */
   interface Session {
     user: {
-      id: string;
-    };
+      id: string
+    }
+    error?: string
   }
 }
