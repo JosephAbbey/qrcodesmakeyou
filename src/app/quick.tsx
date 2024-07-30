@@ -26,7 +26,19 @@ export function Quick({ quick }: { quick: QuickType }) {
             style={{
               backgroundImage: `url(${quick.img})`,
             }}
-          ></div>
+          >
+            <div className='h-full w-full bg-black bg-opacity-25 text-white'>
+              {quick.provider == 'yt' ?
+                <SiYoutube className='h-full w-full p-4' />
+              : quick.provider == 'yt mu' ?
+                <SiYoutubemusic className='h-full w-full p-4' />
+              : quick.provider == 'gh' ?
+                <SiGithub className='h-full w-full p-4' />
+              : quick.provider == 'sp' ?
+                <SiSpotify className='h-full w-full p-4' />
+              : null}
+            </div>
+          </div>
         : <div className='aspect-square w-20 min-w-20 overflow-hidden rounded-md bg-secondary'>
             {quick.provider == 'yt' ?
               <SiYoutube className='h-full w-full p-4' />
