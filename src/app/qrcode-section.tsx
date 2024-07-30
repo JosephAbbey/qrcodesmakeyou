@@ -4,12 +4,31 @@ import { ThemeType } from '@/app/themes/themes'
 import { QRCode } from '@/components/qrcode'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@/components/ui/drawer'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import qrcode, { copy, download, share } from '@/lib/qrcode'
-import { Copy, Download, Share2 } from 'lucide-react'
+import { Check, Copy, Download, Share2, Wifi } from 'lucide-react'
 import {
   createContext,
   useState,
@@ -49,11 +68,73 @@ export default function QRCodeSection({
 
   return (
     <main className='m-4 flex flex-col items-center gap-16'>
-      <Input
-        className='max-w-4xl'
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
-      />
+      <div className='flex w-full max-w-4xl gap-2'>
+        <Input
+          className='flex-grow'
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+        />
+        <Drawer>
+          <DrawerTrigger asChild>
+            <Button variant='outline' size='icon' className='flex-shrink-0'>
+              <Wifi className='h-4 w-4' />
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent>
+            <form
+              className='mx-auto w-full max-w-sm'
+              action={(data) => {
+                const ssid = data.get('ssid') as string
+                const password = data.get('password') as string
+                const security = data.get('security') as
+                  | 'WEP'
+                  | 'WPA'
+                  | 'nopass'
+                const hidden = data.get('hidden') === 'on'
+
+                setUrl(
+                  `WIFI:S:${ssid};T:${security};P:${password};H:${hidden};`,
+                )
+              }}
+            >
+              <DrawerHeader>
+                <DrawerTitle>WiFi Network</DrawerTitle>
+                <DrawerDescription>
+                  Generate a QR code to automatically connect to a WiFi network.
+                </DrawerDescription>
+              </DrawerHeader>
+              <div className='mx-4 flex flex-col gap-2'>
+                <Input placeholder='SSID' id='ssid' name='ssid' />
+                <Input placeholder='Password' id='password' name='password' />
+                <Select defaultValue='WPA' name='security'>
+                  <SelectTrigger>
+                    <SelectValue placeholder='Security' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value='WEP'>WEP</SelectItem>
+                    <SelectItem value='WPA'>WPA</SelectItem>
+                    <SelectItem value='nopass'>No Password</SelectItem>
+                  </SelectContent>
+                </Select>
+                <div className='mt-2 flex items-center space-x-2'>
+                  <Checkbox id='hidden' name='hidden' />
+                  <Label htmlFor='hidden'>Hidden Network</Label>
+                </div>
+              </div>
+              <DrawerFooter>
+                <DrawerClose asChild>
+                  <Button type='submit'>Submit</Button>
+                </DrawerClose>
+                <DrawerClose asChild>
+                  <Button type='button' variant='destructive'>
+                    Cancel
+                  </Button>
+                </DrawerClose>
+              </DrawerFooter>
+            </form>
+          </DrawerContent>
+        </Drawer>
+      </div>
       <div className='aspect-square w-full max-w-80 overflow-hidden rounded-xl'>
         {svg ?
           <Suspense fallback={<Skeleton className='h-full w-full' />}>
