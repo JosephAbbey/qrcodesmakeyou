@@ -23,13 +23,11 @@ export function ThemeInnerClient({
 }>) {
   const [_, startTransition] = useTransition()
 
-  const saveBound = save.bind(null, theme.id)
-
   const [light, setLight] = useState(theme.light ?? '#ffffff')
   const [dark, setDark] = useState(theme.dark ?? '#000000')
   const [cornersPath, setCornersPath] = useState(theme.corners_path ?? '')
   const [cornersFill, setCornersFill] = useState(
-    theme.corners_fill ?? '#ffffff',
+    theme.corners_fill ?? '#000000',
   )
 
   return (
@@ -47,7 +45,17 @@ export function ThemeInnerClient({
         </Suspense>
       </div>
 
-      <form action={saveBound} className='grid w-full max-w-2xl gap-2'>
+      <form
+        action={() => {
+          save(theme.id, {
+            light,
+            dark,
+            corners_path: cornersPath,
+            corners_fill: cornersFill,
+          })
+        }}
+        className='grid w-full max-w-2xl gap-2'
+      >
         {/* TODO: Use proper colour pickers */}
         <Popover>
           <PopoverTrigger asChild>
@@ -71,6 +79,7 @@ export function ThemeInnerClient({
               }}
               color={light}
               onChange={(v) => startTransition(() => setLight(v))}
+              id='light'
             />
           </PopoverContent>
         </Popover>
@@ -96,6 +105,7 @@ export function ThemeInnerClient({
               }}
               color={dark}
               onChange={(v) => startTransition(() => setDark(v))}
+              id='dark'
             />
           </PopoverContent>
         </Popover>
@@ -121,6 +131,7 @@ export function ThemeInnerClient({
               }}
               color={cornersFill}
               onChange={(v) => startTransition(() => setCornersFill(v))}
+              id='corners_fill'
             />
           </PopoverContent>
         </Popover>

@@ -12,15 +12,14 @@ const SaveData = type({
   corners_fill: /^#[0-9a-fA-F]{6}$/,
 })
 
-const SaveFormData = type('parse.formData').pipe(SaveData)
-
-export async function save(id: string, raw_data: FormData) {
+export async function save(id: string, raw_data: (typeof SaveData)['infer']) {
+  console.log(raw_data)
   const session = await auth()
   if (session == null || !session.user) {
     throw new Error('Unauthorized')
   }
 
-  const data = SaveFormData(raw_data)
+  const data = SaveData(raw_data)
   if (data instanceof type.errors) {
     throw new Error('Invalid data')
   }
