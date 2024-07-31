@@ -5,7 +5,7 @@
   "start_url": "/",
   "icons": [
     {
-      "src": "qr-code.png",
+      "src": "favicon.png",
       "type": "image/png",
       "sizes": "512x512"
     }
