@@ -44,4 +44,7 @@ function minifyPath(path: string): string {
     .replace(/^([a-zA-Z])\s+/i, '$1')
     .replace(/\s+-/g, '-')
     .replace(/(\.[0-9]+)\s+(?=\.)/g, '$1')
+    .replace(/\b0+/g, '')
+    .replace(/(\.\d*[1-9])0+\b/g, '$1')
+    .replace(/\.0+/g, '')
 }
