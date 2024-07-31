@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { SiGithub, SiYoutube, SiSpotify } from '@icons-pack/react-simple-icons'
 import Link from 'next/link'
 import { Suspense } from 'react'
@@ -174,7 +175,7 @@ export default function Accounts() {
         </Link>
       </Nav>
       <main className='flex flex-grow flex-col items-center justify-center'>
-        <Suspense fallback={<p>Loading...</p>}>
+        <Suspense fallback={<></>}>
           <AccountsCard />
         </Suspense>
       </main>
