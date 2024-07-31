@@ -17,7 +17,6 @@ export const metadata: Metadata = {
   description: 'A simple QR code generator',
   creator: 'Joseph Abbey',
   manifest: '/manifest.json',
-  icons: '/favicon.ico',
   applicationName: 'QRCodes',
   appleWebApp: {
     capable: true,
@@ -36,9 +35,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en' suppressHydrationWarning>
-      <head>
-        <link rel='icon' href='/favicon.ico' sizes='any' />
-      </head>
+      <head />
       <body
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
