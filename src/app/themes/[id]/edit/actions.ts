@@ -41,6 +41,8 @@ export async function save(id: string, raw_data: (typeof SaveData)['infer']) {
 
 function minifyPath(path: string): string {
   return path
+    .trim()
+    .replace(/\s+/g, ' ')
     .replace(/^([a-zA-Z])\s+/i, '$1')
     .replace(/\s+-/g, '-')
     .replace(/(\.[0-9]+)\s+(?=\.)/g, '$1')
@@ -48,4 +50,5 @@ function minifyPath(path: string): string {
     .replace(/\b0+\./g, '.')
     .replace(/(\.\d*[1-9])0+\b/g, '$1')
     .replace(/\.0+/g, '')
+    .replace(/\s(\w)\s/g, '$1')
 }
