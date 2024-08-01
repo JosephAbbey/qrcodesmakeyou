@@ -6,6 +6,14 @@ import { Button } from '@/components/ui/button'
 import { Card, CardHeader } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command'
+import {
   Drawer,
   DrawerClose,
   DrawerContent,
@@ -17,6 +25,11 @@ import {
 } from '@/components/ui/drawer'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Select,
@@ -28,7 +41,22 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import qrcode, { copy, download, share } from '@/lib/qrcode'
-import { Check, Copy, Download, Share2, Wifi } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import {
+  SiFacebook,
+  SiInstagram,
+  SiX,
+  SiYoutube,
+} from '@icons-pack/react-simple-icons'
+import {
+  UserSearch,
+  Copy,
+  Download,
+  Share2,
+  Wifi,
+  ChevronsUpDown,
+  Check,
+} from 'lucide-react'
 import {
   createContext,
   useState,
@@ -47,6 +75,29 @@ export const ThemeContext = createContext<{
   theme: ThemeType | null
   setTheme: (value: ThemeType | null) => void
 } | null>(null)
+
+const apps = [
+  {
+    label: 'Facebook',
+    value: 'facebook',
+    icon: SiFacebook,
+  },
+  {
+    label: 'YouTube',
+    value: 'youtube',
+    icon: SiYoutube,
+  },
+  {
+    label: 'Twitter',
+    value: 'twitter',
+    icon: SiX,
+  },
+  {
+    label: 'Instagram',
+    value: 'instagram',
+    icon: SiInstagram,
+  },
+] as const
 
 export default function QRCodeSection({
   quicks,
@@ -68,6 +119,10 @@ export default function QRCodeSection({
     if (!url) return
     startTransition(() => setSvg(qrcode(url, theme)))
   }, [url, theme])
+
+  const [selectedApp, setSelectedApp] = useState<(typeof apps)[number] | null>(
+    null,
+  )
 
   return (
     <main className='m-4 flex flex-col items-center gap-16'>
@@ -123,6 +178,121 @@ export default function QRCodeSection({
                   <Checkbox id='hidden' name='hidden' />
                   <Label htmlFor='hidden'>Hidden Network</Label>
                 </div>
+              </div>
+              <DrawerFooter>
+                <div className='flex w-full gap-2'>
+                  <DrawerClose asChild>
+                    <Button
+                      type='button'
+                      variant='destructive'
+                      className='flex-grow'
+                    >
+                      Cancel
+                    </Button>
+                  </DrawerClose>
+                  <DrawerClose asChild>
+                    <Button type='submit' className='flex-grow'>
+                      Submit
+                    </Button>
+                  </DrawerClose>
+                </div>
+              </DrawerFooter>
+            </form>
+          </DrawerContent>
+        </Drawer>
+        <Drawer>
+          <DrawerTrigger asChild>
+            <Button variant='outline' size='icon' className='flex-shrink-0'>
+              <UserSearch className='h-4 w-4' />
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent>
+            <form
+              className='mx-auto w-full max-w-sm'
+              action={(data) => {
+                const username = data.get('username') as string
+                switch (selectedApp?.value) {
+                  case 'facebook':
+                    setUrl(`https://facebook.com/${username}`)
+                    break
+                  case 'youtube':
+                    setUrl(`https://youtube.com/user/${username}`)
+                    break
+                  case 'twitter':
+                    setUrl(`https://twitter.com/${username}`)
+                    break
+                  case 'instagram':
+                    setUrl(`https://instagram.com/${username}`)
+                    break
+                  case null:
+                    toast('Please select an app')
+                    break
+                }
+              }}
+            >
+              <DrawerHeader>
+                <DrawerTitle>Social Account</DrawerTitle>
+                <DrawerDescription>
+                  Generate a QR code to share your social media account.
+                </DrawerDescription>
+              </DrawerHeader>
+              <div className='mx-4 flex flex-col gap-2'>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant='outline'
+                      role='combobox'
+                      className={cn(
+                        'justify-between',
+                        !selectedApp && 'text-muted-foreground',
+                      )}
+                    >
+                      {selectedApp ?
+                        <>
+                          <selectedApp.icon className='mr-2 h-4 w-4' />{' '}
+                          {selectedApp.label}
+                        </>
+                      : 'Select app'}
+                      <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className='p-0'>
+                    <Command>
+                      <CommandInput placeholder='Search apps...' />
+                      <CommandList>
+                        <CommandEmpty>No language found.</CommandEmpty>
+                        <CommandGroup>
+                          {apps.map((app) => (
+                            <CommandItem
+                              value={app.label}
+                              key={app.value}
+                              onSelect={() => {
+                                setSelectedApp(app)
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  'mr-2 h-4 w-4',
+                                  app.value === selectedApp?.value ?
+                                    'opacity-100'
+                                  : 'opacity-0',
+                                )}
+                              />
+                              <app.icon className='mr-2 h-4 w-4' />
+                              {app.label}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <Input
+                  prefix='@'
+                  placeholder='Username'
+                  id='username'
+                  name='username'
+                />
               </div>
               <DrawerFooter>
                 <div className='flex w-full gap-2'>
