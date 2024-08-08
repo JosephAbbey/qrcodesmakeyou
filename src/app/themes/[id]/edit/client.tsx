@@ -4,6 +4,8 @@ import { ThemeType } from '../../themes'
 import { save } from './actions'
 import { QRCode } from '@/components/qrcode'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
 import {
   Popover,
   PopoverContent,
@@ -12,6 +14,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
 import qrcode from '@/lib/qrcode'
+import { CheckedState } from '@radix-ui/react-checkbox'
 import { Save } from 'lucide-react'
 import { Suspense, useTransition, useState } from 'react'
 import { HexColorPicker } from 'react-colorful'
@@ -29,6 +32,7 @@ export function ThemeInnerClient({
   const [cornersFill, setCornersFill] = useState(
     theme.corners_fill ?? '#000000',
   )
+  const [rounded, setRounded] = useState(theme.rounded ?? false)
 
   return (
     <>
@@ -40,6 +44,7 @@ export function ThemeInnerClient({
               dark,
               corners_path: cornersPath,
               corners_fill: cornersFill,
+              rounded,
             })}
           />
         </Suspense>
@@ -52,6 +57,7 @@ export function ThemeInnerClient({
             dark,
             corners_path: cornersPath,
             corners_fill: cornersFill,
+            rounded,
           })
         }}
         className='grid w-full max-w-2xl gap-2'
@@ -145,6 +151,17 @@ export function ThemeInnerClient({
           name='corners_path'
           id='corners_path'
         />
+        <div className='mx-2 mt-2 flex items-center space-x-2'>
+          <Checkbox
+            id='rounded'
+            name='rounded'
+            checked={rounded}
+            onCheckedChange={(e: CheckedState) =>
+              startTransition(() => setRounded(e as boolean))
+            }
+          />
+          <Label htmlFor='rounded'>Rounded</Label>
+        </div>
         <Button type='submit' className='flex gap-2'>
           <Save />
           Save

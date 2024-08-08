@@ -10,6 +10,7 @@ const SaveData = type({
   dark: /^#[0-9a-fA-F]{6}$/,
   corners_path: 'string',
   corners_fill: /^#[0-9a-fA-F]{6}$/,
+  rounded: 'boolean',
 })
 
 export async function save(id: string, raw_data: (typeof SaveData)['infer']) {
@@ -33,6 +34,7 @@ export async function save(id: string, raw_data: (typeof SaveData)['infer']) {
       dark: data.dark == '#000000' ? null : data.dark,
       corners_path: cornersPath == '' ? null : cornersPath,
       corners_fill: data.corners_fill == '#000000' ? null : data.corners_fill,
+      rounded: data.rounded,
     },
   })
 

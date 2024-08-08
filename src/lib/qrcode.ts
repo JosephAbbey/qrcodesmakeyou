@@ -15,10 +15,25 @@ export default async function qrcode(
 ): Promise<string> {
   let code: string = await toStringMemoized(url, {
     type: 'svg',
-    color: { light: theme?.light ?? undefined, dark: theme?.dark ?? undefined },
+    color: {
+      light: theme?.light ?? '#ffffff',
+      dark: theme?.dark ?? '#000000',
+    },
     margin,
   } satisfies QRCodeToStringOptions as QRCodeToStringOptions)
   const size = parseInt(code.match(/viewBox="0 0 (\d+) \d+"/)?.[1] ?? '33')
+
+  if (theme?.rounded) {
+    code = code.replace(
+      /<path[^/]*?\/>/,
+      (m) =>
+        m +
+        `<g style="filter: blur(0.2px) contrast(100000000)"><path d="M0 0h${size - margin * 2 + 1}v${size - margin * 2 + 1}H0z" fill="${theme.light ?? '#ffffff'}" transform="translate(${
+          margin - 0.5
+        } ${margin - 0.5})" />`,
+    )
+    code = code.replace('</svg', '</g></svg')
+  }
 
   if (theme?.corners_path)
     code = code.replace(

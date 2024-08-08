@@ -27,8 +27,7 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -49,7 +48,8 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  themes        Theme[]
+
+  themes Theme[] @relation("ThemeToUser")
 }
 
 model VerificationToken {
@@ -61,11 +61,13 @@ model VerificationToken {
 }
 
 model Theme {
-  id    String @id @default(cuid())
-  users User[]
+  id String @id @default(cuid())
+
+  users User[] @relation("ThemeToUser")
 
   light        String?
   dark         String?
   corners_path String?
   corners_fill String?
+  rounded      Boolean @default(false)
 }
