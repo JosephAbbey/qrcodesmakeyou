@@ -20,6 +20,7 @@ import {
   DrawerDescription,
   DrawerFooter,
   DrawerHeader,
+  DrawerNestedRoot,
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer'
@@ -44,7 +45,9 @@ import qrcode, { copy, download, share } from '@/lib/qrcode'
 import { cn } from '@/lib/utils'
 import {
   SiFacebook,
+  SiGithub,
   SiInstagram,
+  SiSnapchat,
   SiX,
   SiYoutube,
 } from '@icons-pack/react-simple-icons'
@@ -97,6 +100,16 @@ const apps = [
     value: 'instagram',
     icon: SiInstagram,
   },
+  {
+    label: 'GitHub',
+    value: 'github',
+    icon: SiGithub,
+  },
+  {
+    label: 'Snapchat',
+    value: 'snapchat',
+    icon: SiSnapchat,
+  },
 ] as const
 
 export default function QRCodeSection({
@@ -120,6 +133,7 @@ export default function QRCodeSection({
     startTransition(() => setSvg(qrcode(url, theme)))
   }, [url, theme])
 
+  const [appDrawerIsOpen, setAppDrawerIsOpen] = useState(false)
   const [selectedApp, setSelectedApp] = useState<(typeof apps)[number] | null>(
     null,
   )
@@ -200,7 +214,11 @@ export default function QRCodeSection({
             </form>
           </DrawerContent>
         </Drawer>
-        <Drawer>
+        <Drawer
+          open={appDrawerIsOpen}
+          onOpenChange={(isOpen) => setAppDrawerIsOpen(isOpen)}
+          onClose={() => setSelectedApp(null)}
+        >
           <DrawerTrigger asChild>
             <Button variant='outline' size='icon' className='flex-shrink-0'>
               <UserSearch className='h-4 w-4' />
@@ -209,7 +227,10 @@ export default function QRCodeSection({
           <DrawerContent>
             <form
               className='mx-auto w-full max-w-sm'
+              autoSave='off'
+              autoComplete='off'
               action={(data) => {
+                console.log(data, selectedApp)
                 const username = data.get('username') as string
                 switch (selectedApp?.value) {
                   case 'facebook':
@@ -224,10 +245,18 @@ export default function QRCodeSection({
                   case 'instagram':
                     setUrl(`https://instagram.com/${username}`)
                     break
-                  case null:
+                  case 'github':
+                    setUrl(`https://github.com/${username}`)
+                    break
+                  case 'snapchat':
+                    setUrl(`https://snapchat.com/add/${username}?src=QR_CODE`)
+                    break
+                  default:
+                    setUrl('')
                     toast('Please select an app')
                     break
                 }
+                setAppDrawerIsOpen(false)
               }}
             >
               <DrawerHeader>
@@ -256,7 +285,7 @@ export default function QRCodeSection({
                       <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className='p-0'>
+                  <PopoverContent className='pointer-events-auto p-0'>
                     <Command>
                       <CommandInput placeholder='Search apps...' />
                       <CommandList>
@@ -292,6 +321,7 @@ export default function QRCodeSection({
                   placeholder='Username'
                   id='username'
                   name='username'
+                  autoComplete='off'
                 />
               </div>
               <DrawerFooter>
@@ -305,11 +335,9 @@ export default function QRCodeSection({
                       Cancel
                     </Button>
                   </DrawerClose>
-                  <DrawerClose asChild>
-                    <Button type='submit' className='flex-grow'>
-                      Submit
-                    </Button>
-                  </DrawerClose>
+                  <Button type='submit' className='flex-grow'>
+                    Submit
+                  </Button>
                 </div>
               </DrawerFooter>
             </form>
