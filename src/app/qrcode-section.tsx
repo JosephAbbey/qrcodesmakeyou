@@ -163,6 +163,11 @@ export default function QRCodeSection({
                   | 'nopass'
                 const hidden = data.get('hidden') === 'on'
 
+                if (ssid == '') {
+                  toast('Please enter a SSID')
+                  return
+                }
+
                 setUrl(
                   `WIFI:S:${ssid};T:${security};P:${password};H:${hidden};`,
                 )
@@ -175,7 +180,7 @@ export default function QRCodeSection({
                 </DrawerDescription>
               </DrawerHeader>
               <div className='mx-4 flex flex-col gap-2'>
-                <Input placeholder='SSID' id='ssid' name='ssid' />
+                <Input required placeholder='SSID' id='ssid' name='ssid' />
                 <Input placeholder='Password' id='password' name='password' />
                 <Select defaultValue='WPA' name='security'>
                   <SelectTrigger>
@@ -187,7 +192,7 @@ export default function QRCodeSection({
                     <SelectItem value='nopass'>No Password</SelectItem>
                   </SelectContent>
                 </Select>
-                <div className='mt-2 flex items-center space-x-2'>
+                <div className='mx-2 mt-2 flex items-center space-x-2'>
                   <Checkbox id='hidden' name='hidden' />
                   <Label htmlFor='hidden'>Hidden Network</Label>
                 </div>
@@ -231,6 +236,10 @@ export default function QRCodeSection({
               action={(data) => {
                 console.log(data, selectedApp)
                 const username = data.get('username') as string
+                if (username == '') {
+                  toast('Please enter a username')
+                  return
+                }
                 switch (selectedApp?.value) {
                   case 'facebook':
                     setUrl(`https://facebook.com/${username}`)
@@ -251,9 +260,8 @@ export default function QRCodeSection({
                     setUrl(`https://snapchat.com/add/${username}?src=QR_CODE`)
                     break
                   default:
-                    setUrl('')
                     toast('Please select an app')
-                    break
+                    return
                 }
                 setAppDrawerIsOpen(false)
               }}
@@ -316,6 +324,7 @@ export default function QRCodeSection({
                   </PopoverContent>
                 </Popover>
                 <Input
+                  required
                   prefix='@'
                   placeholder='Username'
                   id='username'
