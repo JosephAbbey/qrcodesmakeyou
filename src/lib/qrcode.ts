@@ -38,13 +38,13 @@ export default async function qrcode(
   if (theme?.corners_path)
     code = code.replace(
       '</svg>',
-      `<path d="M0 0h-7v-7H0z" fill="${theme.light ?? '#ffffff'}" transform="translate(${
+      `<path d="M0.5 0.5h-8.5v-8.5H0.5z" fill="${theme.light ?? '#ffffff'}" transform="translate(${
         7 + margin
       } ${7 + margin})" />` +
-        `<path d="M0 0h-7v-7H0z" fill="${theme.light ?? '#ffffff'}" transform="translate(${
+        `<path d="M0.5 0.5h-8.5v-8.5H0.5z" fill="${theme.light ?? '#ffffff'}" transform="translate(${
           size - margin
         } ${7 + margin})" />` +
-        `<path d="M0 0h-7v-7H0z" fill="${theme.light ?? '#ffffff'}" transform="translate(${
+        `<path d="M0.5 0.5h-8.5v-8.5H0.5z" fill="${theme.light ?? '#ffffff'}" transform="translate(${
           7 + margin
         } ${size - margin})" />` +
         `<path d="${theme.corners_path}" fill="${
