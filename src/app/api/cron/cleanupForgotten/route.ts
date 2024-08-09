@@ -1,5 +1,7 @@
 import prisma from '@/lib/prisma'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(req: Request) {
   const authHeader = req.headers.get('authorization')
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -16,5 +18,9 @@ export async function GET(req: Request) {
         none: {},
       },
     },
+  })
+
+  return new Response('Themes cleanup successful', {
+    status: 200,
   })
 }
