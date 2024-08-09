@@ -28,7 +28,7 @@ export default async function qrcode(
       /<path[^/]*?\/>/,
       (m) =>
         m +
-        `<g style="filter: blur(0.2px) contrast(100000000)"><path d="M0 0h${size - margin * 2 + 1}v${size - margin * 2 + 1}H0z" fill="${theme.light ?? '#ffffff'}" transform="translate(${
+        `<g style="filter: blur(0.2px) contrast(10)"><path d="M0 0h${size - margin * 2 + 1}v${size - margin * 2 + 1}H0z" fill="${theme.light ?? '#ffffff'}" transform="translate(${
           margin - 0.5
         } ${margin - 0.5})" />`,
     )
