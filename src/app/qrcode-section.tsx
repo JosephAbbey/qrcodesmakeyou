@@ -40,16 +40,9 @@ import {
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { apps } from '@/lib/apps'
 import qrcode, { copy, download, share } from '@/lib/qrcode'
 import { cn } from '@/lib/utils'
-import {
-  SiFacebook,
-  SiGithub,
-  SiInstagram,
-  SiSnapchat,
-  SiX,
-  SiYoutube,
-} from '@icons-pack/react-simple-icons'
 import {
   UserSearch,
   Copy,
@@ -77,39 +70,6 @@ export const ThemeContext = createContext<{
   theme: ThemeType | null
   setTheme: (value: ThemeType | null) => void
 } | null>(null)
-
-const apps = [
-  {
-    label: 'Facebook',
-    value: 'facebook',
-    icon: SiFacebook,
-  },
-  {
-    label: 'YouTube',
-    value: 'youtube',
-    icon: SiYoutube,
-  },
-  {
-    label: 'Twitter',
-    value: 'twitter',
-    icon: SiX,
-  },
-  {
-    label: 'Instagram',
-    value: 'instagram',
-    icon: SiInstagram,
-  },
-  {
-    label: 'GitHub',
-    value: 'github',
-    icon: SiGithub,
-  },
-  {
-    label: 'Snapchat',
-    value: 'snapchat',
-    icon: SiSnapchat,
-  },
-] as const
 
 export default function QRCodeSection({
   quicks,
@@ -240,29 +200,11 @@ export default function QRCodeSection({
                   toast('Please enter a username')
                   return
                 }
-                switch (selectedApp?.value) {
-                  case 'facebook':
-                    setUrl(`https://facebook.com/${username}`)
-                    break
-                  case 'youtube':
-                    setUrl(`https://youtube.com/user/${username}`)
-                    break
-                  case 'twitter':
-                    setUrl(`https://twitter.com/${username}`)
-                    break
-                  case 'instagram':
-                    setUrl(`https://instagram.com/${username}`)
-                    break
-                  case 'github':
-                    setUrl(`https://github.com/${username}`)
-                    break
-                  case 'snapchat':
-                    setUrl(`https://snapchat.com/add/${username}?src=QR_CODE`)
-                    break
-                  default:
-                    toast('Please select an app')
-                    return
+                if (!selectedApp?.value) {
+                  toast('Please select an app')
+                  return
                 }
+                setUrl(selectedApp.url(username))
                 setAppDrawerIsOpen(false)
               }}
             >
