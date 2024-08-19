@@ -50,7 +50,7 @@ function Scanner() {
             {barcode ? barcode.rawValue : 'No barcode detected'}
           </div>
         </Button>
-        {isTorchSupported || true ?
+        {isTorchSupported ?
           <Button
             onClick={toggleTorch}
             variant={isTorchOn ? 'default' : 'outline'}
