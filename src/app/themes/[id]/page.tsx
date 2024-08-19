@@ -27,6 +27,12 @@ export default function Theme({ params }: { params: { id: string } }) {
         >
           Generator
         </Link>
+        <Link
+          href='/scanner'
+          className='text-muted-foreground transition-colors hover:text-foreground'
+        >
+          Scanner
+        </Link>
         <Link href='/themes' className='font-bold text-foreground'>
           Themes
         </Link>

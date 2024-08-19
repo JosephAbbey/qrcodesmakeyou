@@ -1,18 +1,26 @@
 import { ColorSchemeToggle } from '@/components/color-scheme-toggle'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { cn } from '@/lib/utils'
 import { SiGithub } from '@icons-pack/react-simple-icons'
 import { Menu, QrCode } from 'lucide-react'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 
 export function Nav({
+  className,
   children,
 }: Readonly<{
+  className?: string
   children: ReactNode
 }>) {
   return (
-    <header className='sticky top-0 z-50 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6'>
+    <header
+      className={cn(
+        'sticky top-0 z-50 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6',
+        className,
+      )}
+    >
       <nav className='hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6'>
         <Link
           href='#'

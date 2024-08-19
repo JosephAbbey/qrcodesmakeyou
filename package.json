@@ -39,6 +39,7 @@
     "prisma": "^5.17.0",
     "qrcode": "^1.5.3",
     "react": "19.0.0-rc-f994737d14-20240522",
+    "react-barcode-scanner": "^2.1.0",
     "react-colorful": "^5.6.1",
     "react-dom": "19.0.0-rc-f994737d14-20240522",
     "server-only": "^0.0.1",

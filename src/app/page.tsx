@@ -20,6 +20,12 @@ export default function Home({
           Generator
         </Link>
         <Link
+          href='/scanner'
+          className='text-muted-foreground transition-colors hover:text-foreground'
+        >
+          Scanner
+        </Link>
+        <Link
           href='/themes'
           className='text-muted-foreground transition-colors hover:text-foreground'
         >
