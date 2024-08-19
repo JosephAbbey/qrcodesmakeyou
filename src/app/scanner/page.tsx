@@ -12,7 +12,7 @@ import {
 } from 'react-barcode-scanner'
 import 'react-barcode-scanner/polyfill'
 
-export function Scanner() {
+function Scanner() {
   const [isTorchSupported, isTorchOn, toggleTorch] = useTorch()
 
   const [barcode, setBarcode] = useState<DetectedBarcode | null>(null)
