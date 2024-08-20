@@ -11,10 +11,83 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   session: { strategy: 'jwt' },
   adapter: PrismaAdapter(prisma),
   callbacks: {
-    jwt({ token, user }) {
+    async jwt({ token, user, account, profile }) {
       if (user) {
         // User is available during sign-in
         token.id = user.id
+      }
+
+      if (account) {
+        await prisma.account.upsert({
+          create: {
+            type: account.type,
+            provider: account.provider,
+            providerAccountId: account.providerAccountId,
+            id_token: account.id_token,
+            scope: account.scope,
+            user: {
+              connectOrCreate:
+                user.id ?
+                  {
+                    create: {
+                      email: user.email,
+                      name: user.name,
+                      id: user.id,
+                      image: user.image,
+                    },
+                    where: {
+                      id: user.id,
+                    },
+                  }
+                : undefined,
+              create:
+                user.id ? undefined : (
+                  {
+                    email: user.email,
+                    name: user.name,
+                    id: user.id,
+                    image: user.image,
+                  }
+                ),
+            },
+            token_type: account.token_type,
+
+            access_token: account.access_token ?? null,
+            expires_at:
+              account.expires_at ??
+              Math.floor(Date.now() / 1000 + (account.expires_in ?? 0)),
+            expires_in: account.expires_in ?? null,
+            refresh_token: account.refresh_token,
+            token_at: new Date(),
+            error: false,
+            username:
+              (profile?.display_name as string | undefined | null) ??
+              profile?.nickname ??
+              profile?.name,
+            email: profile?.email,
+          },
+          update: {
+            access_token: account.access_token ?? null,
+            expires_at:
+              account.expires_at ??
+              Math.floor(Date.now() / 1000 + (account.expires_in ?? 0)),
+            expires_in: account.expires_in ?? null,
+            refresh_token: account.refresh_token,
+            token_at: new Date(),
+            error: false,
+            username:
+              (profile?.display_name as string | undefined | null) ??
+              profile?.nickname ??
+              profile?.name,
+            email: profile?.email,
+          },
+          where: {
+            provider_providerAccountId: {
+              provider: account.provider,
+              providerAccountId: account.providerAccountId,
+            },
+          },
+        })
       }
       return token // used in session callback
     },
@@ -156,40 +229,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       }
       return session
-    },
-    async signIn({ account, user, profile }) {
-      if (
-        account &&
-        (await prisma.account.findFirst({
-          where: {
-            provider: account.provider,
-            providerAccountId: account.providerAccountId,
-          },
-        }))
-      ) {
-        await prisma.account.update({
-          data: {
-            access_token: account.access_token ?? null,
-            expires_at:
-              account.expires_at ??
-              Math.floor(Date.now() / 1000 + (account.expires_in ?? 0)),
-            expires_in: account.expires_in ?? null,
-            refresh_token: account.refresh_token,
-            token_at: new Date(),
-            error: false,
-            username:
-              profile?.display_name ?? profile?.nickname ?? profile?.name,
-            email: profile?.email,
-          },
-          where: {
-            provider_providerAccountId: {
-              provider: account.provider,
-              providerAccountId: account.providerAccountId,
-            },
-          },
-        })
-      }
-      return true
     },
   },
 })
