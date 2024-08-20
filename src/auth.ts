@@ -158,7 +158,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session
     },
     async signIn({ account, user, profile }) {
-      if (account)
+      if (
+        account &&
+        (await prisma.account.findFirst({
+          where: {
+            provider: account.provider,
+            providerAccountId: account.providerAccountId,
+          },
+        }))
+      ) {
         await prisma.account.update({
           data: {
             access_token: account.access_token ?? null,
@@ -180,6 +188,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             },
           },
         })
+      }
       return true
     },
   },
