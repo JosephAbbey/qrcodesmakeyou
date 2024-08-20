@@ -25,6 +25,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         where: { userId: session.user.id },
       })
       for (const account of accounts) {
+        if (account.error) continue
         switch (account.provider) {
           case 'google':
             if (
@@ -124,6 +125,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     refresh_token:
                       tokens.refresh_token ?? account.refresh_token,
                     token_at: new Date(),
+                    error: false,
                   },
                   where: {
                     provider_providerAccountId: {
@@ -133,6 +135,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                   },
                 })
               } catch (error) {
+                await prisma.account.update({
+                  data: {
+                    error: true,
+                  },
+                  where: {
+                    provider_providerAccountId: {
+                      provider: 'spotify',
+                      providerAccountId: account.providerAccountId,
+                    },
+                  },
+                })
                 console.error('Error refreshing access token', error)
                 // The error property will be used client-side to handle the refresh token error
                 //@ts-expect-error
@@ -143,6 +156,31 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       }
       return session
+    },
+    async signIn({ account, user, profile }) {
+      if (account)
+        await prisma.account.update({
+          data: {
+            access_token: account.access_token ?? null,
+            expires_at:
+              account.expires_at ??
+              Math.floor(Date.now() / 1000 + (account.expires_in ?? 0)),
+            expires_in: account.expires_in ?? null,
+            refresh_token: account.refresh_token,
+            token_at: new Date(),
+            error: false,
+            username:
+              profile?.display_name ?? profile?.nickname ?? profile?.name,
+            email: profile?.email,
+          },
+          where: {
+            provider_providerAccountId: {
+              provider: account.provider,
+              providerAccountId: account.providerAccountId,
+            },
+          },
+        })
+      return true
     },
   },
 })
