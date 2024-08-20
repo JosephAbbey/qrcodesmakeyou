@@ -60,6 +60,7 @@ import {
   Suspense,
   useTransition,
 } from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
 import { toast } from 'sonner'
 
 export const SetUrlContext = createContext<((value: string) => void) | null>(
@@ -296,9 +297,13 @@ export default function QRCodeSection({
       </div>
       <div className='aspect-square w-full max-w-80 overflow-hidden rounded-xl'>
         {svg ?
-          <Suspense fallback={<Skeleton className='h-full w-full' />}>
-            <QRCode svg={svg} />
-          </Suspense>
+          <ErrorBoundary
+            fallback={<Skeleton className='h-full w-full bg-destructive' />}
+          >
+            <Suspense fallback={<Skeleton className='h-full w-full' />}>
+              <QRCode svg={svg} />
+            </Suspense>
+          </ErrorBoundary>
         : <Skeleton className='h-full w-full' />}
       </div>
       <div className='flex flex-wrap justify-center gap-2'>
