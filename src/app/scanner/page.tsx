@@ -1,10 +1,14 @@
 'use client'
 
+import { ThemeInnerClient } from '../themes/[id]/client'
+import { getTheme } from './actions'
 import { Nav } from '@/components/nav'
 import { Button } from '@/components/ui/button'
+import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Flashlight, FlashlightOff } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { startTransition, Suspense, use, useEffect, useState } from 'react'
 import {
   BarcodeScanner,
   type DetectedBarcode,
@@ -12,10 +16,72 @@ import {
 } from 'react-barcode-scanner'
 import 'react-barcode-scanner/polyfill'
 
+function ThemeDrawerContent({ data }: { data: ReturnType<typeof getTheme> }) {
+  const { theme, added } = use(data)
+
+  return <ThemeInnerClient theme={theme} added={added} />
+}
+
+function ThemeDrawer({
+  id,
+  open,
+  setOpen,
+}: {
+  id: string
+  open: boolean
+  setOpen: (open: boolean) => void
+}) {
+  const data = getTheme(id)
+
+  return (
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerContent>
+        <DrawerTitle className='hidden'>Theme Preview</DrawerTitle>
+        <div className='m-4 mt-10 flex flex-col items-center gap-16'>
+          <Suspense
+            fallback={
+              <>
+                <div className='aspect-square w-full max-w-80 overflow-hidden rounded-xl'>
+                  <Skeleton className='h-full w-full' />
+                </div>
+              </>
+            }
+          >
+            <ThemeDrawerContent data={data} />
+          </Suspense>
+        </div>
+      </DrawerContent>
+    </Drawer>
+  )
+}
+
 function Scanner() {
   const [isTorchSupported, isTorchOn, toggleTorch] = useTorch()
 
   const [barcode, setBarcode] = useState<DetectedBarcode | null>(null)
+
+  const [themeDrawerOpen, setThemeDrawerOpen] = useState(true)
+
+  useEffect(() => {
+    if (
+      barcode &&
+      !barcode.rawValue.startsWith('https://qr.josephabbey.dev/themes/')
+    ) {
+      const t = setTimeout(() => {
+        startTransition(() => setBarcode(null))
+      }, 5000)
+      return () => clearTimeout(t)
+    }
+  }, [barcode])
+
+  useEffect(() => {
+    if (!themeDrawerOpen) {
+      const t = setTimeout(() => {
+        startTransition(() => setBarcode(null))
+      }, 5000)
+      return () => clearTimeout(t)
+    }
+  }, [themeDrawerOpen])
 
   let icon: string
   try {
@@ -47,7 +113,7 @@ function Scanner() {
             />
           )}
           <div className='min-w-0 flex-grow select-none overflow-hidden overflow-ellipsis text-center'>
-            {barcode ? barcode.rawValue : 'No barcode detected'}
+            {barcode ? barcode.rawValue : 'No code detected'}
           </div>
         </Button>
         {isTorchSupported ?
@@ -64,10 +130,17 @@ function Scanner() {
       </div>
       <BarcodeScanner
         className='h-full w-full'
-        onCapture={(barcode) => {
-          setBarcode(barcode)
-        }}
+        onCapture={(barcode) =>
+          startTransition(() => (setThemeDrawerOpen(true), setBarcode(barcode)))
+        }
       />
+      {barcode?.rawValue.startsWith('https://qr.josephabbey.dev/themes/') && (
+        <ThemeDrawer
+          id={barcode.rawValue.slice(34)}
+          open={themeDrawerOpen}
+          setOpen={setThemeDrawerOpen}
+        />
+      )}
     </>
   )
 }
