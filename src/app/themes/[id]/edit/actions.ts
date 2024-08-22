@@ -1,6 +1,6 @@
 'use server'
 
-import { auth } from '@/auth'
+import { auth } from '@/lib/auth'
 import prisma from '@/lib/prisma'
 import { type } from 'arktype'
 import { redirect } from 'next/navigation'

@@ -1,5 +1,4 @@
 import { AccountRow } from './client'
-import { auth, signIn, signOut } from '@/auth'
 import { Nav } from '@/components/nav'
 import { Button } from '@/components/ui/button'
 import {
@@ -10,6 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
+import { auth, signIn, signOut } from '@/lib/auth'
 import prisma from '@/lib/prisma'
 import { SiGithub, SiYoutube, SiSpotify } from '@icons-pack/react-simple-icons'
 import { Session } from 'next-auth'

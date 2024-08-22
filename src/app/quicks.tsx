@@ -1,6 +1,6 @@
 import { ThemeType } from './themes/themes'
 import { Quick } from '@/app/quick'
-import { auth } from '@/auth'
+import { auth } from '@/lib/auth'
 import prisma from '@/lib/prisma'
 import { type } from 'arktype'
 import { User } from 'next-auth'

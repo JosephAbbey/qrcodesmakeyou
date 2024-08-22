@@ -1,6 +1,6 @@
 import { getThemes } from './themes/themes'
 import { Theme } from '@/app/theme'
-import { auth } from '@/auth'
+import { auth } from '@/lib/auth'
 import Link from 'next/link'
 import * as React from 'react'
 

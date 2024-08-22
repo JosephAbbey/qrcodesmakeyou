@@ -1,4 +1,4 @@
-import config from './auth.config'
+import config from '@/lib/auth.config'
 import prisma from '@/lib/prisma'
 import type { TokenSet } from '@auth/core/types'
 import { PrismaAdapter } from '@auth/prisma-adapter'
