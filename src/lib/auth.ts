@@ -15,6 +15,11 @@ declare module 'next-auth' {
       spotify?: string
     }
     html_url?: string
+    images?: {
+      url: string
+      width: number
+      height: number
+    }[]
   }
 }
 
@@ -24,6 +29,13 @@ const YoutubeChannel = type({
   snippet: {
     title: 'string',
     customUrl: 'string',
+    thumbnails: {
+      '[string]': {
+        url: 'string',
+        width: 'integer',
+        height: 'integer',
+      },
+    },
   },
 })
 
@@ -43,11 +55,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.id = user.id
       }
 
-      // console.log(arguments[0])
+      console.log(arguments[0])
 
       if (account) {
         let username: string | null = null
         let url: string | null = null
+        let image: string | null = null
         if (account.provider === 'google') {
           const res = await fetch(
             `https://youtube.googleapis.com/youtube/v3/channels?part=id&part=snippet&maxResults=1&mine=true&key=${GOOGLE_KEY}`,
@@ -66,6 +79,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           } else {
             username = data.items[0].snippet.title
             url = `https://www.youtube.com/${data.items[0].snippet.customUrl ?? data.items[0].id}`
+            image = data.items[0].snippet.thumbnails.default?.url
           }
         }
         await prisma.account.upsert({
@@ -118,6 +132,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               profile?.name,
             email: profile?.email,
             url: url ?? profile?.external_urls?.spotify ?? profile?.html_url,
+            image:
+              image ??
+              profile?.images?.[profile.images.length - 1]?.url ??
+              profile?.picture,
           },
           update: {
             access_token: account.access_token ?? null,
@@ -137,6 +155,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               profile?.name,
             email: profile?.email,
             url: url ?? profile?.external_urls?.spotify ?? profile?.html_url,
+            image:
+              image ??
+              profile?.images?.[profile.images.length - 1]?.url ??
+              profile?.picture,
           },
           where: {
             provider_providerAccountId: {

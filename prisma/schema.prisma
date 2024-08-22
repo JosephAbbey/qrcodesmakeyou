@@ -32,6 +32,7 @@ model Account {
   username          String?
   email             String?
   url               String?
+  image             String?
 
   @@unique([provider, providerAccountId])
 }

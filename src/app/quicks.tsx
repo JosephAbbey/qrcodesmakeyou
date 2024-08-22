@@ -93,6 +93,7 @@ async function getQuicks(user: User) {
           {
             account: true,
             url: account.url,
+            img: account.image ?? undefined,
             title: account.username,
             updated_at: Infinity,
             provider:
