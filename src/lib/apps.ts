@@ -2,6 +2,7 @@ import { ComboItem } from '@/components/ui/combo-box-responsive'
 import {
   SiFacebook,
   SiGithub,
+  SiGmail,
   SiInstagram,
   SiLinkedin,
   SiSnapchat,
@@ -51,6 +52,12 @@ export const apps = [
     value: 'linkedin',
     icon: SiLinkedin,
     url: (username) => `https://linkedin.com/in/${username}`,
+  },
+  {
+    label: 'Email',
+    value: 'email',
+    icon: SiGmail,
+    url: (username) => `mailto:${username}`,
   },
 ] as const satisfies (ComboItem & {
   url: (username: string) => string

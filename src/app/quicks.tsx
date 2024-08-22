@@ -1,4 +1,3 @@
-import { ThemeType } from './themes/themes'
 import { Quick } from '@/app/quick'
 import { auth } from '@/lib/auth'
 import prisma from '@/lib/prisma'
@@ -11,10 +10,11 @@ import 'server-only'
 const { GOOGLE_KEY } = process.env
 
 export interface QuickType {
+  account?: boolean
   url: string
   img?: string | undefined
   title: string
-  provider: 'yt' | 'yt mu' | 'gh' | 'sp'
+  provider: 'youtube' | 'youtube music' | 'github' | 'spotify'
   updated_at: number
 }
 
@@ -87,6 +87,22 @@ async function getQuicks(user: User) {
 
   const promises: Promise<QuickType[]>[] = []
   for (const account of accounts) {
+    if (account.username && account.url) {
+      promises.push(
+        Promise.resolve([
+          {
+            account: true,
+            url: account.url,
+            title: account.username,
+            updated_at: Infinity,
+            provider:
+              account.provider === 'google' ?
+                'youtube'
+              : (account.provider as QuickType['provider']),
+          },
+        ]),
+      )
+    }
     switch (account.provider) {
       case 'google':
         promises.push(
@@ -113,14 +129,14 @@ async function getQuicks(user: User) {
                         img: i.snippet.thumbnails.standard.url,
                         title: i.snippet.title,
                         updated_at: i.snippet.publishedAt.getTime(),
-                        provider: 'yt',
+                        provider: 'youtube',
                       },
                       {
                         url: 'https://music.youtube.com/playlist?list=' + i.id,
                         img: i.snippet.thumbnails.standard.url,
                         title: i.snippet.title,
                         updated_at: i.snippet.publishedAt.getTime(),
-                        provider: 'yt mu',
+                        provider: 'youtube music',
                       },
                     ],
                 ),
@@ -150,7 +166,7 @@ async function getQuicks(user: User) {
                     url: i.html_url,
                     title: i.name,
                     updated_at: i.updated_at?.getTime() ?? 0,
-                    provider: 'gh',
+                    provider: 'github',
                   })),
             ),
         )
@@ -177,7 +193,7 @@ async function getQuicks(user: User) {
                     img: i.images[0]?.url,
                     title: i.name,
                     updated_at: 0,
-                    provider: 'sp',
+                    provider: 'spotify',
                   })),
             ),
         )

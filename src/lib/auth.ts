@@ -2,9 +2,35 @@ import config from '@/lib/auth.config'
 import prisma from '@/lib/prisma'
 import type { TokenSet } from '@auth/core/types'
 import { PrismaAdapter } from '@auth/prisma-adapter'
-import NextAuth from 'next-auth'
+import { type } from 'arktype'
+import NextAuth, { type Profile } from 'next-auth'
 
-const { SPOTIFY_ID, SPOTIFY_SECRET } = process.env
+const { SPOTIFY_ID, SPOTIFY_SECRET, GOOGLE_KEY } = process.env
+
+declare module 'next-auth' {
+  interface Profile {
+    display_name?: string
+    login?: string
+    external_urls?: {
+      spotify?: string
+    }
+    html_url?: string
+  }
+}
+
+const YoutubeChannel = type({
+  kind: '"youtube#channel"',
+  id: 'string',
+  snippet: {
+    title: 'string',
+    customUrl: 'string',
+  },
+})
+
+const YoutubeChannels = type({
+  kind: '"youtube#channelListResponse"',
+  items: [YoutubeChannel, '[]'],
+})
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...config,
@@ -17,7 +43,31 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.id = user.id
       }
 
+      console.log(arguments[0])
+
       if (account) {
+        let username: string | null = null
+        let url: string | null = null
+        if (account.provider === 'google') {
+          const res = await fetch(
+            `https://youtube.googleapis.com/youtube/v3/channels?part=id&part=snippet&maxResults=1&mine=true&key=${GOOGLE_KEY}`,
+            {
+              headers: {
+                Authorization: 'Bearer ' + account.access_token,
+                Accept: 'application/json',
+              },
+            },
+          )
+          const d = await res.json()
+          console.log(d.items[0])
+          const data = YoutubeChannels(d)
+          if (data instanceof type.errors) {
+            console.error(data)
+          } else {
+            username = data.items[0].snippet.title
+            url = `https://www.youtube.com/${data.items[0].snippet.customUrl ?? data.items[0].id}`
+          }
+        }
         await prisma.account.upsert({
           create: {
             type: account.type,
@@ -51,7 +101,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 ),
             },
             token_type: account.token_type,
-
             access_token: account.access_token ?? null,
             expires_at:
               account.expires_at ??
@@ -61,10 +110,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             token_at: new Date(),
             error: false,
             username:
-              (profile?.display_name as string | undefined | null) ??
+              username ??
+              profile?.preferred_username ??
+              profile?.display_name ??
               profile?.nickname ??
+              profile?.login ??
               profile?.name,
             email: profile?.email,
+            url: url ?? profile?.external_urls?.spotify ?? profile?.html_url,
           },
           update: {
             access_token: account.access_token ?? null,
@@ -76,10 +129,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             token_at: new Date(),
             error: false,
             username:
-              (profile?.display_name as string | undefined | null) ??
+              username ??
+              profile?.preferred_username ??
+              profile?.display_name ??
               profile?.nickname ??
+              profile?.login ??
               profile?.name,
             email: profile?.email,
+            url: url ?? profile?.external_urls?.spotify ?? profile?.html_url,
           },
           where: {
             provider_providerAccountId: {

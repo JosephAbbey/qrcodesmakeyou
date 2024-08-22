@@ -229,11 +229,14 @@ export default function QRCodeSection({
                 />
                 <Input
                   required
-                  prefix='@'
+                  prefix={selectedApp?.value == 'email' ? '' : '@'}
                   placeholder='Username'
                   id='username'
                   name='username'
-                  autoComplete='off'
+                  autoComplete={
+                    selectedApp?.value === 'email' ? 'email' : 'off'
+                  }
+                  type={selectedApp?.value === 'email' ? 'email' : 'text'}
                 />
               </div>
               <DrawerFooter>

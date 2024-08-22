@@ -9,6 +9,7 @@ import {
   SiGithub,
   SiSpotify,
 } from '@icons-pack/react-simple-icons'
+import { UserCircle2 } from 'lucide-react'
 import { use } from 'react'
 
 export function Quick({ quick }: { quick: QuickType }) {
@@ -20,38 +21,29 @@ export function Quick({ quick }: { quick: QuickType }) {
       onClick={() => setUrl && setUrl(quick.url)}
     >
       <CardHeader className='flex h-full flex-row items-center gap-4 space-y-0'>
-        {quick.img ?
-          <div
-            className='aspect-square w-20 min-w-20 overflow-hidden rounded-md bg-cover bg-center bg-no-repeat'
-            style={{
-              backgroundImage: `url(${quick.img})`,
-            }}
-          >
-            <div className='h-full w-full bg-black bg-opacity-25 text-white'>
-              {quick.provider == 'yt' ?
-                <SiYoutube className='h-full w-full p-4' />
-              : quick.provider == 'yt mu' ?
-                <SiYoutubemusic className='h-full w-full p-4' />
-              : quick.provider == 'gh' ?
-                <SiGithub className='h-full w-full p-4' />
-              : quick.provider == 'sp' ?
-                <SiSpotify className='h-full w-full p-4' />
-              : null}
-            </div>
-          </div>
-        : <div className='aspect-square w-20 min-w-20 overflow-hidden rounded-md bg-secondary'>
-            {quick.provider == 'yt' ?
-              <SiYoutube className='h-full w-full p-4' />
-            : quick.provider == 'yt mu' ?
-              <SiYoutubemusic className='h-full w-full p-4' />
-            : quick.provider == 'gh' ?
-              <SiGithub className='h-full w-full p-4' />
-            : quick.provider == 'sp' ?
-              <SiSpotify className='h-full w-full p-4' />
+        <div
+          className='aspect-square w-20 min-w-20 overflow-hidden rounded-md bg-secondary bg-cover bg-center bg-no-repeat'
+          style={{
+            backgroundImage: `url(${quick.img})`,
+          }}
+        >
+          <div className='flex h-full w-full content-center justify-center gap-2 bg-black bg-opacity-25 p-4 text-white'>
+            {quick.provider == 'youtube' ?
+              <SiYoutube className='h-full w-full' />
+            : quick.provider == 'youtube music' ?
+              <SiYoutubemusic className='h-full w-full' />
+            : quick.provider == 'github' ?
+              <SiGithub className='h-full w-full' />
+            : quick.provider == 'spotify' ?
+              <SiSpotify className='h-full w-full' />
             : null}
+            {quick.account && <UserCircle2 className='h-full w-full' />}
           </div>
-        }
-        <CardTitle className='truncate overflow-ellipsis text-pretty align-middle'>
+        </div>
+        <CardTitle
+          title={quick.title}
+          className='truncate overflow-ellipsis text-pretty align-middle'
+        >
           {quick.title}
         </CardTitle>
       </CardHeader>

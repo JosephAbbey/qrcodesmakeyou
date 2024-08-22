@@ -31,6 +31,7 @@ model Account {
   error             Boolean  @default(false)
   username          String?
   email             String?
+  url               String?
 
   @@unique([provider, providerAccountId])
 }
