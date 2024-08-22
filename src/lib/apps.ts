@@ -1,3 +1,4 @@
+import { ComboItem } from '@/components/ui/combo-box-responsive'
 import {
   SiFacebook,
   SiGithub,
@@ -51,9 +52,6 @@ export const apps = [
     icon: SiLinkedin,
     url: (username) => `https://linkedin.com/in/${username}`,
   },
-] as const satisfies {
-  label: string
-  value: string
-  icon: React.ComponentType
+] as const satisfies (ComboItem & {
   url: (username: string) => string
-}[]
+})[]

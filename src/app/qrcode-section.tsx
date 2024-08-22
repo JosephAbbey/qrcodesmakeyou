@@ -5,6 +5,7 @@ import { QRCode } from '@/components/qrcode'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
+import { ComboBoxResponsive } from '@/components/ui/combo-box-responsive'
 import {
   Command,
   CommandEmpty,
@@ -216,56 +217,16 @@ export default function QRCodeSection({
                 </DrawerDescription>
               </DrawerHeader>
               <div className='mx-4 flex flex-col gap-2'>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant='outline'
-                      role='combobox'
-                      className={cn(
-                        'justify-between',
-                        !selectedApp && 'text-muted-foreground',
-                      )}
-                    >
-                      {selectedApp ?
-                        <>
-                          <selectedApp.icon className='mr-2 h-4 w-4' />{' '}
-                          {selectedApp.label}
-                        </>
-                      : 'Select app'}
-                      <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className='pointer-events-auto p-0'>
-                    <Command>
-                      <CommandInput placeholder='Search apps...' />
-                      <CommandList>
-                        <CommandEmpty>No language found.</CommandEmpty>
-                        <CommandGroup>
-                          {apps.map((app) => (
-                            <CommandItem
-                              value={app.label}
-                              key={app.value}
-                              onSelect={() => {
-                                setSelectedApp(app)
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  'mr-2 h-4 w-4',
-                                  app.value === selectedApp?.value ?
-                                    'opacity-100'
-                                  : 'opacity-0',
-                                )}
-                              />
-                              <app.icon className='mr-2 h-4 w-4' />
-                              {app.label}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                <ComboBoxResponsive
+                  required
+                  className='w-full'
+                  items={apps}
+                  selectedItem={selectedApp}
+                  setSelectedItem={setSelectedApp}
+                  placeholder='Select App'
+                  id='app'
+                  name='app'
+                />
                 <Input
                   required
                   prefix='@'
