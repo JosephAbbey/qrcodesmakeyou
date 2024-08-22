@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/cleanupForgotten",
       "schedule": "0 5 * * *"
+    },
+    {
+      "path": "/api/cron/cleanupUsers",
+      "schedule": "0 5 * * *"
     }
   ]
 }
