@@ -132,14 +132,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               profile?.login ??
               profile?.name,
             email: profile?.email,
-            url:
-              url ??
-              profile?.external_urls?.spotify ??
-              profile?.avatar_url ??
-              profile?.html_url,
+            url: url ?? profile?.external_urls?.spotify ?? profile?.html_url,
             image:
               image ??
               profile?.images?.[profile.images.length - 1]?.url ??
+              profile?.avatar_url ??
               profile?.picture,
           },
           update: {
@@ -159,14 +156,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               profile?.login ??
               profile?.name,
             email: profile?.email,
-            url:
-              url ??
-              profile?.external_urls?.spotify ??
-              profile?.avatar_url ??
-              profile?.html_url,
+            url: url ?? profile?.external_urls?.spotify ?? profile?.html_url,
             image:
               image ??
               profile?.images?.[profile.images.length - 1]?.url ??
+              profile?.avatar_url ??
               profile?.picture,
           },
           where: {
