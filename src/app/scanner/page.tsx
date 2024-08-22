@@ -75,6 +75,11 @@ function ThemeDialog({
                 <div className='aspect-square w-full max-w-80 overflow-hidden rounded-xl'>
                   <Skeleton className='h-full w-full' />
                 </div>
+                <div className='flex w-full flex-row flex-wrap justify-center gap-2'>
+                  <Skeleton className='h-10 w-[102px]' />
+                  <Skeleton className='h-10 w-[91px]' />
+                </div>
+                <Skeleton className='h-10 w-full' />
               </>
             }
           >
