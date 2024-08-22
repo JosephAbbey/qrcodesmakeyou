@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma'
 import type { TokenSet } from '@auth/core/types'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { type } from 'arktype'
-import NextAuth, { type Profile } from 'next-auth'
+import NextAuth from 'next-auth'
 
 const { SPOTIFY_ID, SPOTIFY_SECRET, GOOGLE_KEY } = process.env
 
@@ -20,6 +20,7 @@ declare module 'next-auth' {
       width: number
       height: number
     }[]
+    avatar_url: string
   }
 }
 
@@ -55,7 +56,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.id = user.id
       }
 
-      console.log(arguments[0])
+      // console.log(arguments[0])
 
       if (account) {
         let username: string | null = null
@@ -131,7 +132,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               profile?.login ??
               profile?.name,
             email: profile?.email,
-            url: url ?? profile?.external_urls?.spotify ?? profile?.html_url,
+            url:
+              url ??
+              profile?.external_urls?.spotify ??
+              profile?.avatar_url ??
+              profile?.html_url,
             image:
               image ??
               profile?.images?.[profile.images.length - 1]?.url ??
@@ -154,7 +159,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               profile?.login ??
               profile?.name,
             email: profile?.email,
-            url: url ?? profile?.external_urls?.spotify ?? profile?.html_url,
+            url:
+              url ??
+              profile?.external_urls?.spotify ??
+              profile?.avatar_url ??
+              profile?.html_url,
             image:
               image ??
               profile?.images?.[profile.images.length - 1]?.url ??
