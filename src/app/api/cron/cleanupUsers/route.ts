@@ -10,12 +10,21 @@ export async function GET(req: Request) {
     })
   }
 
-  // Delete all themes that are not linked to any user
+  // Delete all users that are not linked to any accounts
   // This is a cron job that runs every day
   await prisma.user.deleteMany({
     where: {
       accounts: {
         none: {},
+      },
+    },
+  })
+
+  // Delete all expired sessions
+  await prisma.session.deleteMany({
+    where: {
+      expires: {
+        lt: new Date(),
       },
     },
   })
