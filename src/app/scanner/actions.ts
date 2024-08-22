@@ -11,5 +11,6 @@ export async function getTheme(id: string) {
     redirect('/accounts')
   }
 
+
   return await _getTheme(session.user, id)
 }

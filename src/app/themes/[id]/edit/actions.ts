@@ -14,7 +14,7 @@ const SaveData = type({
 })
 
 export async function save(id: string, raw_data: (typeof SaveData)['infer']) {
-  console.log(raw_data)
+  // console.log(raw_data)
   const session = await auth()
   if (session == null || !session.user) {
     throw new Error('Unauthorized')

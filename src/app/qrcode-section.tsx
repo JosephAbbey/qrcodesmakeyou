@@ -196,7 +196,7 @@ export default function QRCodeSection({
               autoSave='off'
               autoComplete='off'
               action={(data) => {
-                console.log(data, selectedApp)
+                // console.log(data, selectedApp)
                 const username = data.get('username') as string
                 if (username == '') {
                   toast('Please enter a username')

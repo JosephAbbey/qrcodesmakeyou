@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { useMediaQuery } from "@/hooks/use-media-query"
+import { useIsDesktop } from "@/hooks/use-media-query"
 import {
   Command,
   CommandEmpty,
@@ -49,7 +49,7 @@ export function ComboBoxResponsive<T extends ComboItem>(
   } & InputProps
 ) {
   const [open, setOpen] = React.useState(false)
-  const isDesktop = useMediaQuery("(min-width: 768px)")
+  const isDesktop = useIsDesktop()
   const [selectedItemInternal, setSelectedItemInternal] = React.useState<T | null>(
     null
   )

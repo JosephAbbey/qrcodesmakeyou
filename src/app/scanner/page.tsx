@@ -4,8 +4,10 @@ import { ThemeInnerClient } from '../themes/[id]/client'
 import { getTheme } from './actions'
 import { Nav } from '@/components/nav'
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useIsDesktop } from '@/hooks/use-media-query'
 import { Flashlight, FlashlightOff } from 'lucide-react'
 import Link from 'next/link'
 import { startTransition, Suspense, use, useEffect, useState } from 'react'
@@ -16,13 +18,13 @@ import {
 } from 'react-barcode-scanner'
 import 'react-barcode-scanner/polyfill'
 
-function ThemeDrawerContent({ data }: { data: ReturnType<typeof getTheme> }) {
+function ThemeDialogContent({ data }: { data: ReturnType<typeof getTheme> }) {
   const { theme, added } = use(data)
 
   return <ThemeInnerClient theme={theme} added={added} />
 }
 
-function ThemeDrawer({
+function ThemeDialog({
   id,
   open,
   setOpen,
@@ -32,6 +34,35 @@ function ThemeDrawer({
   setOpen: (open: boolean) => void
 }) {
   const data = getTheme(id)
+  const isDesktop = useIsDesktop()
+
+  if (isDesktop) {
+    return (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogTitle className='hidden'>Theme Preview</DialogTitle>
+          <div className='m-4 mt-10 flex flex-col items-center gap-16 overflow-hidden'>
+            <Suspense
+              fallback={
+                <>
+                  <div className='aspect-square w-full max-w-80 overflow-hidden rounded-xl'>
+                    <Skeleton className='h-full w-full' />
+                  </div>
+                  <div className='flex w-full flex-row flex-wrap justify-center gap-2'>
+                    <Skeleton className='h-10 w-[102px]' />
+                    <Skeleton className='h-10 w-[91px]' />
+                  </div>
+                  <Skeleton className='h-10 w-full' />
+                </>
+              }
+            >
+              <ThemeDialogContent data={data} />
+            </Suspense>
+          </div>
+        </DialogContent>
+      </Dialog>
+    )
+  }
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
@@ -47,7 +78,7 @@ function ThemeDrawer({
               </>
             }
           >
-            <ThemeDrawerContent data={data} />
+            <ThemeDialogContent data={data} />
           </Suspense>
         </div>
       </DrawerContent>
@@ -60,7 +91,7 @@ function Scanner() {
 
   const [barcode, setBarcode] = useState<DetectedBarcode | null>(null)
 
-  const [themeDrawerOpen, setThemeDrawerOpen] = useState(true)
+  const [themeDialogOpen, setThemeDialogOpen] = useState(true)
 
   useEffect(() => {
     if (
@@ -75,13 +106,13 @@ function Scanner() {
   }, [barcode])
 
   useEffect(() => {
-    if (!themeDrawerOpen) {
+    if (!themeDialogOpen) {
       const t = setTimeout(() => {
         startTransition(() => setBarcode(null))
       }, 5000)
       return () => clearTimeout(t)
     }
-  }, [themeDrawerOpen])
+  }, [themeDialogOpen])
 
   let icon: string
   try {
@@ -131,14 +162,14 @@ function Scanner() {
       <BarcodeScanner
         className='h-full w-full'
         onCapture={(barcode) =>
-          startTransition(() => (setThemeDrawerOpen(true), setBarcode(barcode)))
+          startTransition(() => (setThemeDialogOpen(true), setBarcode(barcode)))
         }
       />
       {barcode?.rawValue.startsWith('https://qr.josephabbey.dev/themes/') && (
-        <ThemeDrawer
+        <ThemeDialog
           id={barcode.rawValue.slice(34)}
-          open={themeDrawerOpen}
-          setOpen={setThemeDrawerOpen}
+          open={themeDialogOpen}
+          setOpen={setThemeDialogOpen}
         />
       )}
     </>

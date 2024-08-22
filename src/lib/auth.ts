@@ -43,7 +43,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.id = user.id
       }
 
-      console.log(arguments[0])
+      // console.log(arguments[0])
 
       if (account) {
         let username: string | null = null
@@ -59,7 +59,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             },
           )
           const d = await res.json()
-          console.log(d.items[0])
+          // console.log(d.items[0])
           const data = YoutubeChannels(d)
           if (data instanceof type.errors) {
             console.error(data)
