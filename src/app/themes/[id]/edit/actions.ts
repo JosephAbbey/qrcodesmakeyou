@@ -25,7 +25,7 @@ export async function save(id: string, raw_data: (typeof SaveData)['infer']) {
     throw new Error('Invalid data')
   }
 
-  const cornersPath = minifyPath(data.corners_path).replace('"', '')
+  const cornersPath = minifyPath(data.corners_path).replaceAll('"', '')
 
   await prisma.theme.update({
     where: { id },
